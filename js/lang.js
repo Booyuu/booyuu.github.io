@@ -14,7 +14,7 @@ const translations = {
         "nav.sys.media": "// NEURAL INPUTS", // 已修复：不再是 RSS
         
         "nav.join": "JOIN CREW",
-        "nav.back": "← RETURN TO BASE", // 子页面返回按钮
+        "nav.back": "RETURN TO BASE", // 子页面返回按钮
 
         // --- [首页 Index] ---
         "hero.title": "ASTRAL<br>FRONTIER",
@@ -76,7 +76,7 @@ const translations = {
         "nav.sys.media": "// 精神食粮", // 已修复
         
         "nav.join": "加入舰队",
-        "nav.back": "← 返回基地",
+        "nav.back": "返回基地",
 
         // --- [首页 Index] ---
         "hero.title": "星界<br>边境",
