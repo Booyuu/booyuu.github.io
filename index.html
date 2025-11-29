@@ -450,14 +450,17 @@
     </nav>
 
     <main>
-        <section class="h-screen w-full flex flex-col justify-center items-center relative z-10 pointer-events-none">
+        <section class="h-screen w-full flex flex-col justify-center items-center relative z-10 pointer-events-none"
+            id="hero">
             <div class="text-center space-y-2">
-                <div class="data-pill text-white border-white/40 animate-pulse mb-8">
+                <div class="data-pill text-white border-white/40 animate-pulse mb-8" data-i18n="hero.status">
                     <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
                     SYSTEM ACTIVE
                 </div>
+
                 <h1 class="mega-title pointer-events-auto">BOYU</h1>
-                <div class="mega-subtitle">EVENT HORIZON</div>
+
+                <div class="mega-subtitle" data-i18n="hero.subtitle">EVENT HORIZON</div>
             </div>
         </section>
 
@@ -561,7 +564,8 @@
 
                 <div class="grid md:grid-cols-3 gap-8 w-full">
 
-                    <article class="blog-card group pointer-events-auto" onclick="window.location.href='blog/post-01.html'">
+                    <article class="blog-card group pointer-events-auto"
+                        onclick="window.location.href='blog/post-01.html'">
                         <div class="font-mono text-xs text-dim">2025.11.28</div>
                         <div>
                             <h3
@@ -675,9 +679,12 @@
 
                 <div class="grid md:grid-cols-3 gap-8 font-mono text-xs tracking-widest pt-12 border-t border-white/10">
                     <div class="flex flex-col gap-4 text-dim">
-                        <a href="https://x.com/Booyuu888" class="hover:text-white transition-colors pointer-events-auto">TWITTER / X</a>
-                        <a href="https://www.linkedin.com/in/boyu-ethicraft/" class="hover:text-white transition-colors pointer-events-auto">LINKEDIN</a>
-                        <a href="https://t.me/Ethicraft_official" class="hover:text-white transition-colors pointer-events-auto">ETHICRAFT</a>
+                        <a href="https://x.com/Booyuu888"
+                            class="hover:text-white transition-colors pointer-events-auto">TWITTER / X</a>
+                        <a href="https://www.linkedin.com/in/boyu-ethicraft/"
+                            class="hover:text-white transition-colors pointer-events-auto">LINKEDIN</a>
+                        <a href="https://t.me/Ethicraft_official"
+                            class="hover:text-white transition-colors pointer-events-auto">ETHICRAFT</a>
                     </div>
                     <div><a href="mailto:boyu@ethicraft.co"
                             class="text-white hover:text-gray-400 transition-colors pointer-events-auto">BOYU@ETHICRAFT.CO</a>
