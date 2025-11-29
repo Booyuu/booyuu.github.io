@@ -3,141 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="nav.blog">TRANSMISSIONS ARCHIVE</title>
+    <title>BOYU | CHRONOLOGY</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        bg: '#050505',
-                        'accent-blue': '#00f3ff',
-                        'accent-red': '#ff2a2a',
-                        'dim': '#888888',
-                    },
-                    fontFamily: {
-                        serif: ['"Cinzel"', 'serif'],
-                        mono: ['"Space Grotesk"', 'monospace'],
-                        sans: ['"Inter"', 'sans-serif'],
-                    },
+                    colors: { bg: '#050505', dim: '#888888', 'accent-blue': '#00f3ff', 'accent-red': '#ff2a2a' },
+                    fontFamily: { serif: ['"Cinzel"', 'serif'], mono: ['"Space Grotesk"', 'monospace'], sans: ['"Inter"', 'sans-serif'] },
                 }
             }
         }
     </script>
-    
     <style>
-        body { background-color: #020202; color: #EAEAEA; font-family: 'Inter', sans-serif; min-height: 100vh; }
+        body { background-color: #020202; color: #EAEAEA; }
         ::-webkit-scrollbar { width: 0; }
-        
-        /* 背景装饰 */
-        #noise-layer { position: fixed; inset: 0; z-index: -1; opacity: 0.05; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E"); }
-        #stars { position: fixed; inset: 0; z-index: -2; background: #020202; }
-        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 3s infinite; }
-        @keyframes twinkle { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
-
-        /* 搜索栏样式 */
-        .search-box {
-            background: rgba(10, 10, 15, 0.8); border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px); transition: all 0.3s;
-        }
-        .search-box:focus-within { border-color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
-
-        /* 文章卡片 */
-        .archive-item {
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding: 2rem 0;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s; cursor: pointer; opacity: 0; animation: fadeIn 0.5s forwards;
-        }
-        .archive-item:hover { padding-left: 20px; border-color: #00f3ff; background: linear-gradient(90deg, rgba(0,243,255,0.05), transparent); }
-        .archive-title { font-family: 'Cinzel'; font-size: 1.5rem; color: #ccc; transition: color 0.3s; }
-        .archive-item:hover .archive-title { color: #fff; text-shadow: 0 0 10px rgba(0,243,255,0.5); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #noise-layer { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); }
+        /* 时间轴样式 */
+        .timeline-line { position: absolute; left: 0; top: 2rem; bottom: 0; width: 1px; background: linear-gradient(to bottom, #00f3ff, transparent); z-index: 0; }
+        .timeline-dot { position: absolute; left: -4px; top: 1.5rem; width: 9px; height: 9px; background: #050505; border: 1px solid #00f3ff; border-radius: 50%; z-index: 1; box-shadow: 0 0 10px #00f3ff; }
     </style>
 </head>
 <body>
-
     <div id="noise-layer"></div>
-    <div id="stars"></div> 
-    
+
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference">
-        <a href="../index.html" class="font-serif text-xl tracking-widest text-white hover:text-accent-blue transition-colors" data-i18n="nav.back">
-            ← BACK TO TERMINAL
+        <a href="index.html" class="font-mono text-xs tracking-widest hover:text-accent-blue text-gray-400 transition-colors">
+            <i class="ri-arrow-left-line"></i> RETURN TO BASE
         </a>
-        
-        <div class="font-serif text-xl tracking-widest text-white" data-i18n="nav.blog">TRANSMISSIONS ARCHIVE</div>
-        
-        <div></div>
+        <div class="font-serif text-xl tracking-widest text-white hidden md:block">CHRONOLOGY // LOGS</div>
+        <div class="w-10"></div> 
     </nav>
 
-    <main class="max-w-5xl mx-auto px-8 pt-32 pb-20">
-        
-        <div class="mb-16">
-            <div class="font-mono text-xs text-accent-blue tracking-[0.5em] mb-4" data-i18n="nav.blog">SECTOR: ARCHIVE</div>
-            <h1 class="font-serif text-5xl md:text-7xl text-white mb-8" data-i18n="nav.blog">TRANSMISSIONS</h1>
+    <main class="max-w-4xl mx-auto px-8 pt-40 pb-20">
+        <div class="mb-24">
+            <div class="inline-flex items-center gap-2 px-3 py-1 border border-accent-blue/30 rounded-full mb-6">
+                <span class="w-1.5 h-1.5 bg-accent-blue rounded-full animate-pulse"></span>
+                <span class="font-mono text-[10px] text-accent-blue tracking-widest">DATABASE ONLINE</span>
+            </div>
+            <h1 class="font-serif text-6xl md:text-8xl text-white mb-8">TRANSMISSIONS</h1>
+            <p class="font-sans text-dim text-lg max-w-xl">来自星际航行与思维探索的记录片段。</p>
+        </div>
+
+        <section class="relative pl-8 md:pl-16 border-l border-white/10">
             
-            <div class="search-box p-4 flex items-center gap-4 rounded-sm max-w-2xl">
-                <i class="ri-search-line text-dim"></i>
-                <input type="text" id="search-input" data-i18n-placeholder="search.placeholder" placeholder="SEARCH LOGS (KEYWORD / YYYY.MM.DD)..." 
-                       class="bg-transparent w-full outline-none text-white font-mono text-sm tracking-widest placeholder-gray-600 uppercase">
-            </div>
-        </div>
+            <div class="font-mono text-4xl text-white/20 absolute -left-[5rem] md:-left-[7rem] top-0 rotate-90 origin-top-left">2025</div>
 
-        <div id="posts-container" class="border-t border-white/20">
-            </div>
-        
-        <div id="no-results" class="hidden py-12 text-center font-mono text-dim tracking-widest" data-i18n="search.noresults">
-            // NO DATA FOUND IN SECTOR
-        </div>
+            <div class="space-y-24">
+                <article class="relative group cursor-pointer" onclick="window.location.href='post-01.html'">
+                    <div class="timeline-dot group-hover:bg-accent-blue transition-colors"></div>
+                    <div class="font-mono text-xs text-accent-blue mb-3 tracking-widest">NOVEMBER 28 // SECTOR 03</div>
+                    <h2 class="font-serif text-3xl md:text-4xl text-white mb-4 group-hover:text-accent-blue transition-colors">The Future of Algorithmic Art</h2>
+                    <p class="font-sans text-dim leading-relaxed line-clamp-3 pr-8">探索生成式艺术在现代网页设计中的应用与效果。代码如何成为新的画笔，创造出不可预知的数字景观。</p>
+                    <div class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-blue opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
+                        READ LOG <i class="ri-arrow-right-line"></i>
+                    </div>
+                </article>
 
+                <article class="relative group cursor-pointer">
+                    <div class="timeline-dot group-hover:bg-accent-red transition-colors" style="border-color: #ff2a2a; box-shadow: 0 0 10px #ff2a2a;"></div>
+                    <div class="font-mono text-xs text-accent-red mb-3 tracking-widest">OCTOBER 15 // SECTOR 02</div>
+                    <h2 class="font-serif text-3xl md:text-4xl text-white mb-4 group-hover:text-accent-red transition-colors">Finding Alpha in Bear Markets</h2>
+                    <p class="font-sans text-dim leading-relaxed line-clamp-3 pr-8">在下行周期中寻找确定性机会的交易笔记。如何在市场情绪低迷时保持冷静并执行策略。</p>
+                    <div class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-red opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
+                        ACCESS DENIED <i class="ri-lock-line"></i>
+                    </div>
+                </article>
+            </div>
+        </section>
     </main>
 
     <script>
-        // === 1. 极简星空背景 JS ===
-        const stars = document.getElementById('stars');
-        for(let i=0; i<100; i++) {
-            let s = document.createElement('div'); s.className='star';
-            s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
-            s.style.width = Math.random()*2+'px'; s.style.height = s.style.width;
-            s.style.animationDelay = Math.random()*5+'s';
-            stars.appendChild(s);
-        }
+        // 平滑滚动
+        const lenis = new Lenis({ duration: 1.2, smooth: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
 
-        // === 2. 博客数据库 (保持不变，但修正链接) ===
-        const blogData = [
-            {
-                date: "2025.11.28",
-                category: "THOUGHTS",
-                title: "The Future of Algorithmic Art",
-                desc: "探索生成式艺术在现代网页设计中的应用与边界。",
-                link: "../post-01.html" 
-            },
-            // ... (其他文章数据) ...
-        ];
-
-        const container = document.getElementById('posts-container');
-        const searchInput = document.getElementById('search-input');
-        const noResults = document.getElementById('no-results');
-
-        // === 3. 渲染函数 (保持不变) ===
-        function renderPosts(posts) { /* ... */ }
-        // ... (省略渲染函数内容) ...
-        
-        // === 4. 搜索逻辑 (保持不变) ===
-        searchInput.addEventListener('input', (e) => { /* ... */ });
-        // ... (省略搜索逻辑内容) ...
-
-        // 初始化渲染
-        renderPosts(blogData);
-
+        // 入场动画
+        gsap.from("h1, p", { y: 50, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" });
+        gsap.from("article", { x: -30, opacity: 0, duration: 0.8, stagger: 0.3, delay: 0.5, ease: "power2.out" });
+        gsap.from(".timeline-dot", { scale: 0, duration: 0.5, stagger: 0.3, delay: 0.7, ease: "back.out(1.7)" });
     </script>
-    <script src="../js/lang.js"></script>
 </body>
 </html>
