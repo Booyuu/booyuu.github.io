@@ -1,46 +1,113 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOYU | ICELAND JOURNAL</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
+
     <style>
-        body { background-color: #050505; color: #EAEAEA; font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { width: 0; }
-        
+        body {
+            background-color: #050505;
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+
         /* 沉浸式首图 */
         .hero-header {
-            height: 80vh; width: 100%; position: relative; overflow: hidden;
+            height: 80vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
         }
+
         .hero-img {
-            width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6);
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
             animation: zoomIn 20s infinite alternate;
         }
-        @keyframes zoomIn { from { transform: scale(1); } to { transform: scale(1.1); } }
-        
-        .hero-title {
-            position: absolute; bottom: 10%; left: 5%; z-index: 10;
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
         }
-        
+
+        .hero-title {
+            position: absolute;
+            bottom: 10%;
+            left: 5%;
+            z-index: 10;
+        }
+
         /* 正文排版 */
-        .article-content p { margin-bottom: 1.5rem; line-height: 1.8; color: #ccc; font-size: 1.1rem; }
-        .article-content h2 { font-family: 'Cinzel', serif; color: #fff; font-size: 2rem; margin-top: 4rem; margin-bottom: 1.5rem; }
-        
+        .article-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .article-content h2 {
+            font-family: 'Cinzel', serif;
+            color: #fff;
+            font-size: 2rem;
+            margin-top: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
         /* 数据侧边栏 */
-        .meta-box { border-left: 1px solid rgba(255,255,255,0.2); padding-left: 2rem; }
-        .meta-item { margin-bottom: 2rem; }
-        .meta-label { font-family: 'Space Grotesk'; font-size: 10px; color: #666; letter-spacing: 0.1em; margin-bottom: 0.5rem; display: block; }
-        .meta-value { font-family: 'Rajdhani'; font-size: 1.2rem; color: #fff; }
+        .meta-box {
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            padding-left: 2rem;
+        }
+
+        .meta-item {
+            margin-bottom: 2rem;
+        }
+
+        .meta-label {
+            font-family: 'Space Grotesk';
+            font-size: 10px;
+            color: #666;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .meta-value {
+            font-family: 'Rajdhani';
+            font-size: 1.2rem;
+            color: #fff;
+        }
 
         /* 文中图片 */
-        .inline-img { width: 100%; border-radius: 2px; margin: 2rem 0; opacity: 0.9; }
+        .inline-img {
+            width: 100%;
+            border-radius: 2px;
+            margin: 2rem 0;
+            opacity: 0.9;
+        }
     </style>
 </head>
+
 <body>
 
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference text-white">
@@ -48,10 +115,47 @@
             <i class="ri-arrow-left-line"></i> BACK TO MAP
         </a>
         <div class="font-mono text-xs tracking-widest">LOG: ICELAND</div>
+        <div class="relative group font-mono pointer-events-auto" id="audio-console">
+            <div class="relative">
+                <button id="music-trigger"
+                    class="flex items-center gap-3 opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
+                    onclick="toggleMainPlayback()">
+                    <div class="flex items-end gap-[2px] h-3" id="master-wave">
+                        <div class="wave-bar w-[2px] h-1 bg-white"></div>
+                        <div class="wave-bar w-[2px] h-2 bg-white"></div>
+                        <div class="wave-bar w-[2px] h-1.5 bg-white"></div>
+                        <div class="wave-bar w-[2px] h-3 bg-white"></div>
+                    </div>
+                    <div class="flex flex-col leading-none text-left">
+                        <span class="text-[10px] tracking-widest text-white truncate max-w-[120px]"
+                            id="current-track-name">AUDIO OFF</span>
+                        <span id="time-display" class="text-[8px] text-dim mt-1 hidden">0:00 / 0:00</span>
+                    </div>
+                </button>
+                <div id="progress-container"
+                    class="absolute bottom-[-5px] left-0 w-full h-[2px] bg-white/20 cursor-pointer hidden hover:h-[4px] transition-all z-50">
+                    <div id="progress-bar" class="h-full bg-accent-blue w-0 relative">
+                        <div
+                            class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full shadow-[0_0_10px_#00f3ff] opacity-0 group-hover:opacity-100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="absolute top-full left-0 w-64 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2 pointer-events-none group-hover:pointer-events-auto">
+                <div class="bg-black/95 backdrop-blur-xl border border-white/20 p-2 flex flex-col gap-1 shadow-2xl">
+                    <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-accent-blue"></div>
+                    <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-accent-blue"></div>
+                    <div id="playlist-container"></div>
+                </div>
+            </div>
+        </div>
+        <audio id="global-audio"></audio>
     </nav>
 
     <header class="hero-header">
-        <img src="https://images.unsplash.com/photo-1530883154101-ce08df5ec9be?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="hero-img">
+        <img src="https://images.unsplash.com/photo-1530883154101-ce08df5ec9be?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            class="hero-img">
         <div class="hero-title">
             <div class="font-mono text-xs tracking-[0.5em] text-red-500 mb-4">Redhouse</div>
             <h1 class="font-serif text-6xl md:text-8xl text-white leading-none">Experience In<br>ICELAND</h1>
@@ -60,9 +164,10 @@
 
     <main class="max-w-[1400px] mx-auto px-6 py-32">
         <div class="grid md:grid-cols-12 gap-16">
-            
+
             <div class="md:col-span-8 article-content">
-                <p class="first-letter:text-5xl first-letter:font-serif first-letter:float-left first-letter:mr-4 first-letter:text-white">
+                <p
+                    class="first-letter:text-5xl first-letter:font-serif first-letter:float-left first-letter:mr-4 first-letter:text-white">
                     冰岛的荒原有一种寂静的压迫感。当你驾驶着越野车穿越高地，周围是黑色的火山灰和苔藓，你会感觉自己降落在了另一个星球。
                 </p>
                 <p>
@@ -79,10 +184,12 @@
                 <p>
                     我们在维克小镇停留了一晚，等待极光指数（KP）达到 5 的时刻。
                 </p>
-                
+
                 <div class="grid grid-cols-2 gap-4 my-8">
-                    <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=800" class="w-full h-64 object-cover">
-                    <img src="https://images.unsplash.com/photo-1484429791456-7762873ce0f9?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-full h-64 object-cover">
+                    <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=800"
+                        class="w-full h-64 object-cover">
+                    <img src="https://images.unsplash.com/photo-1484429791456-7762873ce0f9?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                        class="w-full h-64 object-cover">
                 </div>
             </div>
 
@@ -105,7 +212,7 @@
                         <span class="meta-label">MOOD</span>
                         <div class="meta-value">Isolation</div>
                     </div>
-                    
+
                     <div class="mt-12 pt-12 border-t border-white/10 flex gap-4 text-xl text-gray-500">
                         <i class="ri-twitter-x-line hover:text-white cursor-pointer"></i>
                         <i class="ri-links-line hover:text-white cursor-pointer"></i>
@@ -114,16 +221,18 @@
             </div>
 
         </div>
-        
+
         <div class="border-t border-white/10 mt-32 pt-16">
             <h3 class="font-mono text-xs tracking-widest text-gray-500 mb-8">NEXT DESTINATION</h3>
             <div class="grid grid-cols-2 gap-8">
                 <div class="aspect-video bg-gray-900 relative group cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=800" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all">
+                    <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?q=80&w=800"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all">
                     <div class="absolute bottom-4 left-4 font-serif text-xl text-white">SINGAPORE</div>
                 </div>
                 <div class="aspect-video bg-gray-900 relative group cursor-pointer">
-                    <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=800" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all">
+                    <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?q=80&w=800"
+                        class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all">
                     <div class="absolute bottom-4 left-4 font-serif text-xl text-white">SHANGHAI</div>
                 </div>
             </div>
@@ -132,6 +241,8 @@
     </main>
 
     <script src="../js/lang.js"></script>
+    <script src="../js/audio.js"></script>
 
 </body>
+
 </html>
