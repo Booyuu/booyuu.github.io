@@ -3,22 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOYU | NEURAL LIBRARY</title>
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
+    <title data-i18n="media.title">BOYU | NEURAL LIBRARY</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#050505',
+                        'accent-blue': '#00f3ff',
+                        'accent-red': '#ff2a2a',
+                    },
+                    fontFamily: {
+                        serif: ['"Cinzel"', 'serif'],
+                        mono: ['"Space Grotesk"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
     <style>
+        /* [START] 注入滑块CSS样式 (确保滑块能动) */
+        .lang-switch-container { cursor: pointer; position: relative; width: 64px; height: 24px; display: inline-block; vertical-align: middle; margin-left: 20px; pointer-events: auto; }
+        .lang-track { position: relative; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; padding: 0 8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .lang-text { font-family: 'Space Grotesk', monospace; font-size: 10px; font-weight: bold; color: #666; z-index: 10; pointer-events: none; }
+        .lang-glider { position: absolute; top: 2px; left: 2px; width: 30px; height: 18px; background: #fff; transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 5; mix-blend-mode: screen; }
+        .lang-zh-mode .lang-glider { transform: translateX(28px); background: #00f3ff; box-shadow: 0 0 15px #00f3ff; }
+        /* [END] 注入滑块CSS样式 */
+
         body { background-color: #020202; color: #EAEAEA; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         ::-webkit-scrollbar { width: 0; }
-
+        
         /* 背景 */
-        #noise-layer { position: fixed; inset: 0; z-index: -1; opacity: 0.05; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E"); }
+        #noise-layer { position: fixed; inset: 0; z-index: -1; opacity: 0.05; background-image: url("data:image/svg+xml,..."); }
         
         /* 标题 */
         .mega-title {
@@ -32,31 +60,16 @@
             padding: 2rem 0; transition: all 0.3s; cursor: pointer;
         }
         .book-card:hover { padding-left: 20px; border-color: #fff; }
-        .book-cover {
-            width: 80px; height: 110px; background: #111; border: 1px solid #333;
-            display: flex; justify-content: center; align-items: center; font-family: 'Cinzel'; font-size: 2rem; color: #333;
-            transition: all 0.3s; position: relative;
-        }
-        /* 书脊厚度效果 */
-        .book-cover::before {
-            content: ''; position: absolute; left: 2px; top: 0; width: 2px; height: 100%; background: rgba(255,255,255,0.2);
-        }
-        .book-card:hover .book-cover { border-color: #fff; color: #fff; transform: rotateY(-20deg) perspective(500px); }
-
-        /* 音乐卡片 */
-        .music-card {
-            background: rgba(255,255,255,0.03); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; gap: 1.5rem; transition: all 0.3s;
-        }
+        .book-cover { width: 80px; height: 110px; background: #111; border: 1px solid #333; transition: all 0.3s; position: relative; }
+        .book-card:hover .book-cover { border-color: #fff; }
+        .book-cover::before { content: ''; position: absolute; left: 2px; top: 0; width: 2px; height: 100%; background: rgba(255,255,255,0.2); }
+        .music-card { background: rgba(255,255,255,0.03); padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
         .music-card:hover { background: rgba(255,255,255,0.08); border-color: #00f3ff; transform: translateY(-5px); }
         .album-art { width: 60px; height: 60px; background: #222; border-radius: 50%; animation: spin 10s linear infinite; animation-play-state: paused; }
         .music-card:hover .album-art { animation-play-state: running; box-shadow: 0 0 15px #00f3ff; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        .data-pill {
-            border: 1px solid rgba(255,255,255,0.3); padding: 6px 16px; font-family: 'Space Grotesk'; font-size: 11px;
-            text-transform: uppercase; letter-spacing: 0.1em; display: inline-flex; align-items: center; gap: 8px; color: #ccc;
-        }
+        .data-pill { border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; font-family: 'Space Grotesk'; font-size: 11px; letter-spacing: 0.1em; color: #888; }
     </style>
 </head>
 <body>
@@ -64,14 +77,16 @@
     <div id="noise-layer"></div>
 
     <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference">
-        <a href="../index.html" class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors">
-            <i class="ri-arrow-left-line"></i> <span data-i18n="nav.back">RETURN TO BASE</span>
+        <a href="index.html" class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors" data-i18n="nav.back">
+            <i class="ri-arrow-left-line"></i> RETURN TO BASE
         </a>
-        
-        <div class="pointer-events-auto font-mono text-xs tracking-widest cursor-pointer flex gap-1" onclick="toggleLanguage()">
-            <span id="lang-en" class="text-white font-bold">EN</span>
-            <span class="text-dim">/</span>
-            <span id="lang-zh" class="text-dim hover:text-white transition-colors">CN</span>
+        <div class="font-serif text-xl tracking-widest text-white" data-i18n="media.title">NEURAL LIBRARY</div>
+        <div class="lang-switch-container" onclick="toggleLanguage()">
+            <div class="lang-track">
+                <span id="lang-en" class="lang-text left" style="color: #000;">EN</span>
+                <span class="lang-text right">CN</span>
+                <div class="lang-glider"></div>
+            </div>
         </div>
     </nav>
 
@@ -97,27 +112,27 @@
                 <div class="book-card group">
                     <div class="book-cover">I</div> 
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors">Thinking, Fast and Slow</h3>
-                        <p class="font-mono text-xs text-gray-500 mt-1">Daniel Kahneman</p>
-                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2">关于人类决策直觉与理性的深度剖析。交易心理学的基石。</p>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors" data-i18n="book.thinking">Thinking, Fast and Slow</h3>
+                        <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.kahneman">Daniel Kahneman</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.thinking.desc">关于人类决策直觉与理性的深度剖析。交易心理学的基石。</p>
                     </div>
                 </div>
 
                 <div class="book-card group">
                     <div class="book-cover">II</div>
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors">The Black Swan</h3>
-                        <p class="font-mono text-xs text-gray-500 mt-1">Nassim Nicholas Taleb</p>
-                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2">在这个不确定的世界里，如何应对不可预知的极端风险。</p>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors" data-i18n="book.swan">The Black Swan</h3>
+                        <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.taleb">Nassim Nicholas Taleb</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.swan.desc">在这个不确定的世界里，如何应对不可预知的极端风险。</p>
                     </div>
                 </div>
                 
                  <div class="book-card group">
                     <div class="book-cover">III</div>
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors">Steve Jobs</h3>
-                        <p class="font-mono text-xs text-gray-500 mt-1">Walter Isaacson</p>
-                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2">疯狂与完美的结合体。产品美学的极致追求。</p>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors" data-i18n="book.jobs">Steve Jobs</h3>
+                        <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.isaacson">Walter Isaacson</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.jobs.desc">疯狂与完美的结合体。产品美学的极致追求。</p>
                     </div>
                 </div>
             </div>
@@ -135,7 +150,7 @@
                     <div>
                         <h4 class="font-bold text-white">Interstellar OST</h4>
                         <p class="text-xs text-gray-500 font-mono mt-1">Hans Zimmer</p>
-                        <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
+                         <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
                             <div class="h-full bg-accent-blue w-2/3 animate-pulse"></div>
                         </div>
                     </div>
@@ -167,17 +182,16 @@
 
     </main>
 
-    <script src="js/lang.js"></script>
+    <script src="../js/lang.js"></script>
     
     <script>
         // 简单的入场动画
-        gsap.from(".mega-title", { y: 100, opacity: 0, duration: 1.5, ease: "power3.out" });
+        gsap.from("h1, p", { y: 30, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out" });
         gsap.from(".book-card", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.5 });
         gsap.from(".music-card", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, delay: 0.8 });
 
         const lenis = new Lenis({ duration: 1.2, smooth: true });
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
     </script>
-    <script src="../js/lang.js"></script>
 </body>
 </html>
