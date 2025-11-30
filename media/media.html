@@ -172,44 +172,117 @@
 
     </nav>
 
-    <main class="max-w-[1200px] mx-auto px-8 pt-32 pb-20 relative z-10">
+    <main class="max-w-[1200px] mx-auto px-8 pt-32 pb-20">
+
+        <!-- Header -->
         <div class="mb-24 grid md:grid-cols-2 gap-12 items-end">
             <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 border border-white/30 rounded-full mb-8"><span
-                        class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span><span
-                        class="font-mono text-[10px] tracking-widest">INPUT SOURCE</span></div>
-                <h1 class="mega-title">NEURAL<br>LIBRARY</h1>
+                <div class="data-pill mb-8" data-i18n="media.status">CURRENTLY CONSUMING</div>
+                <h1 class="mega-title" data-i18n="media.title">NEURAL<br>LIBRARY</h1>
             </div>
-            <div class="font-sans text-gray-400 text-lg max-w-md leading-relaxed">Input source for the mind. Books,
-                Frequencies, and Cinema.</div>
+            <div class="font-sans text-gray-400 text-lg max-w-md leading-relaxed" data-i18n="media.desc">
+                Input source for the mind. Books, Frequencies, and Cinema.
+            </div>
         </div>
 
+        <!-- 1. 书籍板块 -->
         <section class="mb-32">
-            <div class="flex items-center gap-4 mb-12 border-b border-white/10 pb-4"><i
-                    class="ri-book-3-line text-accent-red"></i><span
-                    class="font-mono text-xs tracking-[0.2em] text-gray-500">DATA ARCHIVE // BOOKS</span></div>
+            <div class="flex items-center gap-4 mb-12 border-b border-white/10 pb-4">
+                <i class="ri-book-3-line text-accent-red"></i>
+                <span class="font-mono text-xs tracking-[0.2em] text-gray-500" data-i18n="media.books">DATA ARCHIVE //
+                    BOOKS</span>
+            </div>
+
             <div class="grid md:grid-cols-2 gap-12">
+                <!-- 书籍 1 -->
                 <div class="book-card group">
-                    <div class="book-cover group-hover:border-accent-red group-hover:text-accent-red">I</div>
+                    <div class="book-cover">I</div>
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors">
-                            Thinking, Fast and Slow</h3>
-                        <p class="font-mono text-xs text-gray-500 mt-1">Daniel Kahneman</p>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors"
+                            data-i18n="book.1">How to Trade in Stocks</h3>
+                        <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.1a">Jesse Livermore</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.1a.a">
+                            伟大的书籍，必读。</p>
                     </div>
                 </div>
+
+                <!-- 书籍 2 -->
                 <div class="book-card group">
-                    <div class="book-cover group-hover:border-accent-red group-hover:text-accent-red">II</div>
+                    <div class="book-cover">II</div>
                     <div>
-                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors">The
-                            Black Swan</h3>
-                        <p class="font-mono text-xs text-gray-500 mt-1">Nassim Nicholas Taleb</p>
+                        <h3 class="font-serif text-2xl text-white group-hover:text-accent-red transition-colors"
+                            data-i18n="book.2">The Almanack of Naval Ravikant</h3>
+                        <p class="font-mono text-xs text-gray-500 mt-1" data-i18n="book.2a">Eric Jorgenson</p>
+                        <p class="font-sans text-sm text-gray-400 mt-4 line-clamp-2" data-i18n="book.2a.a">
+                            财富与幸福指南。</p>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- 2. 音乐板块 -->
+        <section>
+            <div class="flex items-center gap-4 mb-12 border-b border-white/10 pb-4">
+                <i class="ri-disc-line text-accent-blue"></i>
+                <span class="font-mono text-xs tracking-[0.2em] text-gray-500" data-i18n="media.music">SONIC WAVES //
+                    MUSIC</span>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- 音乐 1 -->
+                <div class="music-card">
+                    <div class="album-art"
+                        style="background-image: url('https://m.media-amazon.com/images/I/81qzC1PyqiL._AC_SX679_.jpg'); background-size: cover;">
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white">Saman</h4>
+                        <p class="text-xs text-gray-500 font-mono mt-1">Ólafur Arnalds</p>
+                        <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
+                            <div class="h-full bg-accent-blue w-2/3 animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 音乐 2 -->
+                <div class="music-card">
+                    <div class="album-art"
+                        style="background-image: url('https://i.scdn.co/image/ab67616d0000b273bf06f195f7a27fae2272d28e'); background-size: cover;">
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-white">Oceans</h4>
+                        <p class="text-xs text-gray-500 font-mono mt-1">Ólafur Arnalds</p>
+                        <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
+                            <div class="h-full bg-accent-blue w-1/3 animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 音乐 3 -->
+                <div class="music-card">
+                    <div class="album-art" style="background-image: url('https://i.kfs.io/album/global/492369,1v1/fit/500x500.jpg'); background-size: cover;"></div>
+                    <div>
+                        <h4 class="font-bold text-white">My Only Girl</h4>
+                        <p class="text-xs text-gray-500 font-mono mt-1">Khalil Fong</p>
+                        <div class="w-20 h-0.5 bg-gray-700 mt-3 overflow-hidden">
+                            <div class="h-full bg-accent-blue w-full animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
+    <!-- 引擎库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <!-- 引入语言核心 -->
     <script src="../js/lang.js"></script>
+
+    <!-- 引入音频核心 -->
     <script src="../js/audio.js"></script>
 
     <script>
@@ -225,19 +298,17 @@
 
             // 2. GSAP 入场动画
             gsap.from("h1.mega-title, .font-sans.text-lg", { y: 50, opacity: 0, duration: 1.2, stagger: 0.2, ease: "power3.out" });
+            gsap.from(".data-pill", { scale: 0, duration: 0.5, ease: "back.out(1.7)", delay: 0.5 });
 
             // 3. 书籍列表动画 (ScrollTrigger)
-            // 确保初始状态隐藏，防止闪烁
-            gsap.set(".book-card", { opacity: 0, y: 30 });
-
+            // 确保初始状态由CSS控制，GSAP负责从隐藏到显示
             ScrollTrigger.batch(".book-card", {
                 onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: "power2.out" }),
                 start: "top 90%", // 当元素进入视口 90% 时触发
-                once: true // 只触发一次，往回滚不会隐藏
+                once: true // 只触发一次
             });
 
             // 音乐卡片动画
-            gsap.set(".music-card", { opacity: 0, y: 30 });
             ScrollTrigger.batch(".music-card", {
                 onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: "power2.out" }),
                 start: "top 90%",
