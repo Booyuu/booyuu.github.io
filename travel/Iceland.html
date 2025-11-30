@@ -130,12 +130,24 @@
 
 <body>
 
-    <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference text-white">
-        <a href="travel.html" class="font-mono text-xs tracking-widest hover:text-gray-300 transition-colors">
-            <i class="ri-arrow-left-line"></i> BACK TO MAP
-        </a>
-        <div class="font-mono text-xs tracking-widest">LOG: ICELAND</div>
-        <div id="audio-slot"></div>
+    <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
+
+        <div class="pointer-events-auto flex items-center gap-6">
+
+            <a href="../index.html"
+                class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2"
+                data-i18n="nav.back">
+                <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i> RETURN TO BASE
+            </a>
+
+            <div class="h-4 w-[1px] bg-white/20"></div>
+
+            <div id="audio-slot"></div>
+
+        </div>
+
+        <div></div>
+
     </nav>
 
     <header class="hero-header">
