@@ -1060,7 +1060,7 @@
                 modal.classList.add('opacity-0');
                 modalContent.classList.remove('scale-100');
                 modalContent.classList.add('scale-95');
-                
+
                 // 等动画放完再隐藏
                 setTimeout(() => {
                     modal.classList.add('hidden');
@@ -1068,61 +1068,70 @@
             }
         }
 
-        // 绑定导航栏按钮点击事件
-        navBtn.addEventListener('click', () => {
-            // 如果已经连接了，点击就是断开或者查看详情（这里简化为不弹窗）
-            if (navWalletText.innerText.startsWith("0x")) {
-                alert("Wallet already connected: " + navWalletText.innerText);
-            } else {
-                toggleWalletModal(true);
-            }
-        });
-
-        // 2. 连接逻辑 (复用之前的核心逻辑)
+        // 👇👇👇 【直接跳转版】 connectWallet 函数 👇👇👇
         async function connectWallet(type) {
-            console.log("Selecting wallet:", type);
-            
-            // 本地环境检查
+            console.log("正在尝试连接:", type);
+
+            // 本地文件检查
             if (window.location.protocol === 'file:') {
-                alert("Error: Web3 requires a server environment (localhost or GitHub Pages).");
+                alert("Error: Web3 requires a server environment.");
                 return;
             }
 
             let provider;
-            
+
+            // === OKX 查找逻辑 ===
             if (type === 'okx') {
-                provider = window.okxwallet || window.ethereum;
-            } else if (type === 'metamask') {
-                if (window.ethereum?.providers) {
-                    provider = window.ethereum.providers.find(p => p.isMetaMask);
-                } else {
+                if (typeof window.okxwallet !== 'undefined') {
+                    provider = window.okxwallet;
+                }
+                else if (typeof window.ethereum !== 'undefined' && window.ethereum.isOkxWallet) {
                     provider = window.ethereum;
                 }
-            } else {
-                // 对于 WalletConnect 和 All Wallets，只是展示UI
-                alert("Module 'WalletConnect' is loading... (This is a demo)");
+            }
+            // === MetaMask 查找逻辑 ===
+            else if (type === 'metamask') {
+                if (window.ethereum) {
+                    if (window.ethereum.providers) {
+                        provider = window.ethereum.providers.find(p => p.isMetaMask);
+                    }
+                    else if (window.ethereum.isMetaMask && !window.ethereum.isOkxWallet) {
+                        provider = window.ethereum;
+                    }
+                    else {
+                        provider = window.ethereum;
+                    }
+                }
+            }
+            else {
+                alert("Module 'WalletConnect' is loading...");
                 return;
             }
 
+            // === 最终检查：没找到插件，直接跳转 ===
             if (!provider) {
-                 if(type === 'okx') {
+                console.log("未检测到插件，跳转下载页...");
+
+                if (type === 'okx') {
+                    // OKX: 直接去 Web3 官网
                     window.open('https://www.okx.com/web3', '_blank');
                 } else {
-                    window.open('https://metamask.io', '_blank');
+                    // MetaMask: 直接去官网
+                    window.open('https://metamask.io/', '_blank');
                 }
                 return;
             }
 
+            // === 正常连接 ===
             try {
-                // 关闭弹窗，显示连接中
                 toggleWalletModal(false);
                 navWalletText.innerText = "CONNECTING...";
-                
+
                 const accounts = await provider.request({ method: 'eth_requestAccounts' });
                 handleAccountsChanged(accounts);
-                
+
             } catch (error) {
-                console.error(error);
+                console.error("Connection Error:", error);
                 navWalletText.innerText = "CONNECT WALLET";
             }
         }
@@ -1131,14 +1140,14 @@
             if (accounts && accounts.length > 0) {
                 const account = accounts[0];
                 const shortAddress = `${account.substring(0, 4)}...${account.substring(account.length - 4)}`;
-                
+
                 // 更新导航栏文字
                 navWalletText.innerText = shortAddress;
-                
+
                 // 激活按钮发光样式
                 navBtn.classList.add("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
                 navBtn.style.backgroundColor = "rgba(0, 243, 255, 0.05)";
-                
+
                 // 确保弹窗关闭
                 toggleWalletModal(false);
             } else {
