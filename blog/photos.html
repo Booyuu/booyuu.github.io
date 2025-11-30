@@ -6,8 +6,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOYU | VISUAL ARCHIVES</title>
 
+    <!-- 图标 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind 扩展（重要：播放器依赖 accent-blue） -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        bg: "#050505",
+                        dim: "#888888",
+                        "accent-blue": "#00f3ff",
+                        "accent-red": "#ff2a2a",
+                    },
+                    fontFamily: {
+                        serif: ['"Cinzel"', "serif"],
+                        mono: ['"Space Grotesk"', "monospace"],
+                        sans: ['"Inter"', "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
     <style>
         body {
@@ -32,6 +61,11 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
+        .photo-wrapper {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+        }
+
         .photo-card img {
             width: 100%;
             height: 100%;
@@ -50,12 +84,6 @@
             transform: scale(1.05);
         }
 
-        /* 固定比例：16:9 响应式 */
-        .photo-wrapper {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-        }
-
         .overlay-info {
             position: absolute;
             left: 0;
@@ -69,6 +97,27 @@
 
         .photo-card:hover .overlay-info {
             opacity: 1;
+        }
+
+        /* 🎵 音乐波形动画（必须添加） */
+        .wave-bar {
+            transition: all 0.2s ease;
+            transform-origin: bottom;
+        }
+
+        .playing .wave-bar {
+            animation: sound-wave 0.8s infinite ease-in-out alternate;
+            background-color: #00f3ff !important;
+        }
+
+        .playing .wave-bar:nth-child(1) { animation-delay: 0s; }
+        .playing .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .playing .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes sound-wave {
+            0% { height: 2px; }
+            100% { height: 12px; }
         }
     </style>
 </head>
@@ -84,14 +133,13 @@
         <div class="pointer-events-auto flex items-center gap-6">
 
             <a href="../index.html"
-               class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2">
+                class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2">
                 <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i>
                 RETURN TO BASE
             </a>
 
             <div class="h-4 w-[1px] bg-white/20"></div>
 
-            <!-- 播放器插槽 -->
             <div id="audio-slot"></div>
         </div>
     </nav>
@@ -101,7 +149,7 @@
 
         <h1 class="text-5xl font-serif font-bold mb-16">VISUAL ARCHIVES</h1>
 
-        <!-- 新布局：整齐网格 -->
+        <!-- Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
 
             <!-- Photo 1 -->
@@ -109,7 +157,6 @@
                 <div class="photo-wrapper">
                     <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=1200">
                 </div>
-
                 <div class="overlay-info">
                     <h3 class="font-serif text-xl text-white">ICELANDIC HIGHLANDS</h3>
                 </div>
@@ -120,7 +167,6 @@
                 <div class="photo-wrapper">
                     <img src="https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?q=80&w=1200">
                 </div>
-
                 <div class="overlay-info">
                     <h3 class="font-serif text-xl text-white">THE VOID</h3>
                 </div>
@@ -129,23 +175,23 @@
             <!-- Photo 3 -->
             <div class="photo-card">
                 <div class="photo-wrapper">
-                    <img src="https://images.unsplash.com/photo-1536431311719-398b670a9e6d?q=80&w=1200">
+                    <img src="https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
                 </div>
-
                 <div class="overlay-info">
-                    <h3 class="font-serif text-xl text-white">NEON NIGHTS</h3>
+                    <h3 class="font-serif text-xl text-white">NEW YORK</h3>
                 </div>
             </div>
 
         </div>
+
     </main>
 
-    <!-- 音频核心 -->
+    <!-- Audio 核心 -->
     <script src="../js/audio.js"></script>
 
     <script>
-        /* 粒子背景 */
-        const canvas = document.getElementById('bg-canvas');
+        /* 粒子背景系统 */
+        const canvas = document.getElementById("bg-canvas");
         const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -162,13 +208,13 @@
             positions[i] = (Math.random() - 0.5) * 800;
         }
 
-        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
         const material = new THREE.PointsMaterial({
             size: 1.2,
             color: 0x888888,
             transparent: true,
-            opacity: 0.6
+            opacity: 0.6,
         });
 
         const starField = new THREE.Points(particles, material);
@@ -181,10 +227,9 @@
         }
         animate();
 
-        window.addEventListener('resize', () => {
+        window.addEventListener("resize", () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
     </script>
 
 </body>
