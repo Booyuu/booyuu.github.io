@@ -866,18 +866,16 @@
                     </button>
                 </div>
 
-                <div class="p-6 grid grid-cols-2 gap-4">
-
+                <div id="walletGrid" class="p-6 grid grid-cols-2 gap-4">
                     <button onclick="connectWallet('okx')"
                         class="group flex flex-col items-center justify-center gap-3 p-4 border border-white/10 bg-white/5 hover:bg-white/10 hover:border-accent-blue transition-all duration-300">
                         <div
                             class="w-12 h-12 rounded-xl bg-black border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <img src="https://play-lh.googleusercontent.com/N00SbjLJJrhg4hbdnkk3Llk2oedNNgCU29DvR9cpep7Lr0VkzvBkmLqajWNgFb0d7IOO"
+                            <img src="https://comm.okx.com/image/202206/0cf49581-9d22-4a0b-93df-59b2d3989c90.png"
                                 class="w-8 h-8 object-cover">
                         </div>
                         <div class="text-center">
                             <div class="font-mono text-sm text-white group-hover:text-accent-blue">OKX Wallet</div>
-                            <div class="text-[10px] text-dim mt-1">Recommended</div>
                         </div>
                     </button>
 
@@ -890,7 +888,6 @@
                         </div>
                         <div class="text-center">
                             <div class="font-mono text-sm text-white group-hover:text-[#E17726]">MetaMask</div>
-                            <div class="text-[10px] text-dim mt-1">Popular</div>
                         </div>
                     </button>
 
@@ -902,7 +899,6 @@
                         </div>
                         <div class="text-center">
                             <div class="font-mono text-sm text-white group-hover:text-[#3396FF]">WalletConnect</div>
-                            <div class="text-[10px] text-dim mt-1">Scan QR Code</div>
                         </div>
                     </button>
 
@@ -914,9 +910,41 @@
                         </div>
                         <div class="text-center">
                             <div class="font-mono text-sm text-white">All Wallets</div>
-                            <div class="text-[10px] text-dim mt-1">View More</div>
                         </div>
                     </button>
+                </div>
+
+                <div id="connectedView" class="hidden p-6 flex flex-col items-center justify-center gap-6 text-center">
+
+                    <div
+                        class="w-16 h-16 rounded-full border border-accent-blue bg-accent-blue/10 flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.2)]">
+                        <i class="ri-user-3-line text-2xl text-accent-blue"></i>
+                    </div>
+
+                    <div class="space-y-1">
+                        <h4 class="font-serif text-lg text-white">ACCOUNT ACTIVE</h4>
+                        <div
+                            class="w-full bg-black border border-white/10 px-3 py-1.5 rounded font-mono text-[10px] text-gray-400 break-all select-all">
+                            <span id="fullAddressDisplay">0x...</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 w-full">
+                        <button onclick="switchWallet()"
+                            class="py-2 border border-white/30 text-white hover:bg-white hover:text-black transition-all font-mono text-[10px] tracking-widest uppercase">
+                            <i class="ri-exchange-line mr-1"></i> Switch
+                        </button>
+
+                        <button onclick="disconnectWallet()"
+                            class="py-2 border border-tech-red/50 text-tech-red hover:bg-tech-red hover:text-white transition-all font-mono text-[10px] tracking-widest uppercase">
+                            <i class="ri-shut-down-line mr-1"></i> Exit
+                        </button>
+                    </div>
+
+                    <p class="text-[9px] text-dim border-t border-white/10 pt-3 w-full">
+                        <i class="ri-error-warning-line align-bottom mr-1"></i>
+                        安全提示：请务必去钱包插件内手动断开连接。
+                    </p>
 
                 </div>
 
@@ -1040,17 +1068,21 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // === F. Web3 Modal & Connection Logic ===
+        // === F. Web3 Modal & Connection Logic (最终完整版) ===
         const modal = document.getElementById('walletModal');
         const modalContent = document.getElementById('modalContent');
         const navBtn = document.getElementById('openWalletModalBtn');
         const navWalletText = document.getElementById('navWalletText');
 
+        // === 新增：引用弹窗内的两个视图 ===
+        const walletGrid = document.getElementById('walletGrid');
+        const connectedView = document.getElementById('connectedView');
+        const fullAddressDisplay = document.getElementById('fullAddressDisplay');
+
         // 1. 弹窗控制函数
         function toggleWalletModal(show) {
             if (show) {
                 modal.classList.remove('hidden');
-                // 强制重绘，为了动画效果
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
                     modalContent.classList.remove('scale-95');
@@ -1060,19 +1092,22 @@
                 modal.classList.add('opacity-0');
                 modalContent.classList.remove('scale-100');
                 modalContent.classList.add('scale-95');
-
-                // 等动画放完再隐藏
                 setTimeout(() => {
                     modal.classList.add('hidden');
                 }, 300);
             }
         }
 
-        // 👇👇👇 【直接跳转版】 connectWallet 函数 👇👇👇
+        // 2. 绑定导航栏按钮点击事件
+        navBtn.addEventListener('click', () => {
+            // 点击总是打开弹窗，显示哪种视图由 handleAccountsChanged 决定
+            toggleWalletModal(true);
+        });
+
+        // 3. 连接钱包核心逻辑 (直接跳转版)
         async function connectWallet(type) {
             console.log("正在尝试连接:", type);
 
-            // 本地文件检查
             if (window.location.protocol === 'file:') {
                 alert("Error: Web3 requires a server environment.");
                 return;
@@ -1084,8 +1119,7 @@
             if (type === 'okx') {
                 if (typeof window.okxwallet !== 'undefined') {
                     provider = window.okxwallet;
-                }
-                else if (typeof window.ethereum !== 'undefined' && window.ethereum.isOkxWallet) {
+                } else if (typeof window.ethereum !== 'undefined' && window.ethereum.isOkxWallet) {
                     provider = window.ethereum;
                 }
             }
@@ -1094,29 +1128,22 @@
                 if (window.ethereum) {
                     if (window.ethereum.providers) {
                         provider = window.ethereum.providers.find(p => p.isMetaMask);
-                    }
-                    else if (window.ethereum.isMetaMask && !window.ethereum.isOkxWallet) {
+                    } else if (window.ethereum.isMetaMask && !window.ethereum.isOkxWallet) {
                         provider = window.ethereum;
-                    }
-                    else {
+                    } else {
                         provider = window.ethereum;
                     }
                 }
-            }
-            else {
+            } else {
                 alert("Module 'WalletConnect' is loading...");
                 return;
             }
 
-            // === 最终检查：没找到插件，直接跳转 ===
+            // === 没找到插件，直接跳转 ===
             if (!provider) {
-                console.log("未检测到插件，跳转下载页...");
-
                 if (type === 'okx') {
-                    // OKX: 直接去 Web3 官网
                     window.open('https://www.okx.com/web3', '_blank');
                 } else {
-                    // MetaMask: 直接去官网
                     window.open('https://metamask.io/', '_blank');
                 }
                 return;
@@ -1124,7 +1151,7 @@
 
             // === 正常连接 ===
             try {
-                toggleWalletModal(false);
+                // 注意：这里不要关闭弹窗，因为连接成功后我们会切换视图
                 navWalletText.innerText = "CONNECTING...";
 
                 const accounts = await provider.request({ method: 'eth_requestAccounts' });
@@ -1136,28 +1163,57 @@
             }
         }
 
+        // 4. 状态变更处理 (核心逻辑升级：控制视图切换)
         function handleAccountsChanged(accounts) {
             if (accounts && accounts.length > 0) {
+                // === 状态：已连接 ===
                 const account = accounts[0];
                 const shortAddress = `${account.substring(0, 4)}...${account.substring(account.length - 4)}`;
 
-                // 更新导航栏文字
+                // 更新导航栏
                 navWalletText.innerText = shortAddress;
-
-                // 激活按钮发光样式
                 navBtn.classList.add("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
                 navBtn.style.backgroundColor = "rgba(0, 243, 255, 0.05)";
 
-                // 确保弹窗关闭
+                // 更新弹窗视图 -> 显示“详情/退出”页
+                if (walletGrid) walletGrid.classList.add('hidden');
+                if (connectedView) connectedView.classList.remove('hidden');
+                if (fullAddressDisplay) fullAddressDisplay.innerText = account;
+
+                // 连接成功后，如果弹窗还开着，自动关闭（提升体验）
+                // 如果你想让用户看到连接成功的状态，可以把下面这行注释掉
                 toggleWalletModal(false);
+
             } else {
+                // === 状态：未连接 ===
                 navWalletText.innerText = "CONNECT WALLET";
                 navBtn.classList.remove("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
                 navBtn.style.backgroundColor = "transparent";
+
+                // 重置弹窗视图 -> 显示“列表”页
+                if (walletGrid) walletGrid.classList.remove('hidden');
+                if (connectedView) connectedView.classList.add('hidden');
             }
         }
 
-        // 自动重连
+        // 5. 断开连接 (Exit)
+        function disconnectWallet() {
+            handleAccountsChanged([]); // 清除前端状态
+            toggleWalletModal(false);  // 关闭弹窗
+
+            setTimeout(() => {
+                alert("已断开网页连接。\n\n⚠️ 安全提示：\n请务必去您的钱包插件(如MetaMask)里手动取消授权。");
+            }, 300);
+        }
+
+        // 6. 切换钱包 (Switch)
+        function switchWallet() {
+            // 隐藏详情页，显示列表页，让用户重选
+            connectedView.classList.add('hidden');
+            walletGrid.classList.remove('hidden');
+        }
+
+        // 自动重连检测
         window.addEventListener('load', () => {
             if (window.ethereum) {
                 window.ethereum.request({ method: 'eth_accounts' })
