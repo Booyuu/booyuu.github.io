@@ -934,6 +934,14 @@
 
                     <div class="space-y-1">
                         <h4 class="font-serif text-lg text-white">ACCOUNT ACTIVE</h4>
+
+                        <div id="networkBadge"
+                            class="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-2">
+                            <span id="networkDot" class="w-1.5 h-1.5 rounded-full bg-gray-500 animate-pulse"></span>
+                            <span id="networkName"
+                                class="font-mono text-[9px] text-dim tracking-wider uppercase">DETECTING...</span>
+                        </div>
+
                         <div
                             class="w-full bg-black border border-white/10 px-3 py-1.5 rounded font-mono text-[10px] text-gray-400 break-all select-all">
                             <span id="fullAddressDisplay">0x...</span>
@@ -1103,7 +1111,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // === F. Web3 Modal & Connection Logic (最终修正版) ===
+        // === F. Web3 Modal & Connection Logic (带网络识别完整版) ===
         const modal = document.getElementById('walletModal');
         const modalContent = document.getElementById('modalContent');
         const navBtn = document.getElementById('openWalletModalBtn');
@@ -1115,6 +1123,21 @@
         const disconnectWarningView = document.getElementById('disconnectWarningView');
         const fullAddressDisplay = document.getElementById('fullAddressDisplay');
         const cancelSwitchBtn = document.getElementById('cancelSwitchBtn');
+
+        // === 新增：网络状态引用 (对应上一元添加的 HTML) ===
+        const networkName = document.getElementById('networkName');
+        const networkDot = document.getElementById('networkDot');
+
+        // === 核心资产：链 ID 字典 ===
+        const chainMap = {
+            '0x1': { name: 'ETHEREUM', color: '#00ff00' },          // 主网 (绿)
+            '0xaa36a7': { name: 'SEPOLIA', color: '#ffd700' },      // 测试网 (黄)
+            '0x38': { name: 'BSC', color: '#F0B90B' },              // 币安链 (金)
+            '0x89': { name: 'POLYGON', color: '#8247E5' },          // 马蹄链 (紫)
+            '0x42': { name: 'OKTC', color: '#000000' },             // OKX 老链
+            '0xc6': { name: 'X LAYER', color: '#00f3ff' },          // OKX ZK Layer (重点!)
+            '0xe15503': { name: 'X LAYER TEST', color: '#00f3ff' }  // OKX 测试网
+        };
 
         // 1. 弹窗控制
         function toggleWalletModal(show) {
@@ -1137,7 +1160,7 @@
 
         navBtn.addEventListener('click', () => toggleWalletModal(true));
 
-        // 2. 连接逻辑 (修复 OKX 跳转)
+        // 2. 连接逻辑
         async function connectWallet(type) {
             if (window.location.protocol === 'file:') {
                 alert("Error: Web3 requires a server environment.");
@@ -1146,42 +1169,26 @@
 
             let provider = null;
 
-            // === OKX 查找逻辑 ===
             if (type === 'okx') {
-                if (typeof window.okxwallet !== 'undefined') {
-                    provider = window.okxwallet;
-                } else if (typeof window.ethereum !== 'undefined' && window.ethereum.isOkxWallet) {
-                    provider = window.ethereum;
-                }
-            } 
-            // === MetaMask 查找逻辑 ===
-            else if (type === 'metamask') {
+                if (typeof window.okxwallet !== 'undefined') provider = window.okxwallet;
+                else if (typeof window.ethereum !== 'undefined' && window.ethereum.isOkxWallet) provider = window.ethereum;
+            } else if (type === 'metamask') {
                 if (window.ethereum) {
-                    if (window.ethereum.providers) {
-                        provider = window.ethereum.providers.find(p => p.isMetaMask);
-                    } else if (window.ethereum.isMetaMask && !window.ethereum.isOkxWallet) {
-                        provider = window.ethereum;
-                    } else {
-                        provider = window.ethereum;
-                    }
+                    if (window.ethereum.providers) provider = window.ethereum.providers.find(p => p.isMetaMask);
+                    else if (window.ethereum.isMetaMask && !window.ethereum.isOkxWallet) provider = window.ethereum;
+                    else provider = window.ethereum;
                 }
             } else {
                 alert("Module 'WalletConnect' is loading...");
                 return;
             }
 
-            // === 没找到插件，直接跳转 (修复点：确保 provider 为 null 时一定触发) ===
             if (!provider) {
-                console.log("未检测到插件，准备跳转...");
-                if (type === 'okx') {
-                    window.open('https://www.okx.com/web3', '_blank');
-                } else {
-                    window.open('https://metamask.io/', '_blank');
-                }
+                if (type === 'okx') window.open('https://www.okx.com/web3', '_blank');
+                else window.open('https://metamask.io/', '_blank');
                 return;
             }
 
-            // === 正常连接 ===
             try {
                 navWalletText.innerText = "CONNECTING...";
                 const accounts = await provider.request({ method: 'eth_requestAccounts' });
@@ -1192,8 +1199,8 @@
             }
         }
 
-        // 3. 状态管理
-        function handleAccountsChanged(accounts) {
+        // 3. 状态管理 (集成网络识别)
+        async function handleAccountsChanged(accounts) {
             if (accounts && accounts.length > 0) {
                 // === 已连接 ===
                 const account = accounts[0];
@@ -1205,9 +1212,19 @@
                 if (walletGrid) walletGrid.classList.add('hidden');
                 if (disconnectWarningView) disconnectWarningView.classList.add('hidden');
                 if (connectedView) connectedView.classList.remove('hidden');
-                
+
                 if (fullAddressDisplay) fullAddressDisplay.innerText = account;
                 if (cancelSwitchBtn) cancelSwitchBtn.classList.add('hidden');
+
+                // 👇👇👇 核心：获取当前网络 👇👇👇
+                if (window.ethereum) {
+                    try {
+                        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                        updateNetworkUI(chainId);
+                    } catch (err) {
+                        console.error("Failed to get chain ID", err);
+                    }
+                }
 
                 toggleWalletModal(false);
 
@@ -1217,7 +1234,6 @@
                 navBtn.classList.remove("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
                 navBtn.style.backgroundColor = "transparent";
 
-                // 切换回列表页
                 if (walletGrid) walletGrid.classList.remove('hidden');
                 if (connectedView) connectedView.classList.add('hidden');
                 if (disconnectWarningView) disconnectWarningView.classList.add('hidden');
@@ -1225,20 +1241,35 @@
             }
         }
 
-        // 4. 点击退出 -> 警告页
+        // === 新增：更新网络 UI ===
+        function updateNetworkUI(chainId) {
+            if (!networkName || !networkDot) return; // 防止没加HTML报错
+
+            const chainInfo = chainMap[chainId];
+            if (chainInfo) {
+                networkName.innerText = chainInfo.name;
+                networkName.style.color = "rgba(255,255,255,0.9)";
+                networkDot.style.backgroundColor = chainInfo.color;
+                networkDot.style.boxShadow = `0 0 8px ${chainInfo.color}`;
+            } else {
+                networkName.innerText = `UNKNOWN (${chainId})`;
+                networkName.style.color = "#888";
+                networkDot.style.backgroundColor = "#666";
+                networkDot.style.boxShadow = "none";
+            }
+        }
+
+        // 4. 点击退出
         function disconnectWallet() {
             connectedView.classList.add('hidden');
             disconnectWarningView.classList.remove('hidden');
         }
 
-        // 5. 确认断开 (修复闪烁问题)
+        // 5. 确认断开
         function confirmDisconnect() {
-            // 步骤 A: 先关掉弹窗 (让用户看不到背后的变化)
             toggleWalletModal(false);
-
-            // 步骤 B: 等动画播完 (300ms) 再重置状态
             setTimeout(() => {
-                handleAccountsChanged([]); 
+                handleAccountsChanged([]);
             }, 300);
         }
 
@@ -1256,14 +1287,22 @@
             if (cancelSwitchBtn) cancelSwitchBtn.classList.add('hidden');
         }
 
+        // === 监听器：网络切换 & 自动重连 ===
         window.addEventListener('load', () => {
             if (window.ethereum) {
+                // 自动连接
                 window.ethereum.request({ method: 'eth_accounts' })
                     .then(handleAccountsChanged)
                     .catch(console.error);
+
+                // 监听网络变化 (实时变色)
+                window.ethereum.on('chainChanged', (chainId) => {
+                    console.log("Network switched to:", chainId);
+                    updateNetworkUI(chainId);
+                });
             }
         });
-        
+
     </script>
 </body>
 
