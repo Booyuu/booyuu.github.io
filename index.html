@@ -539,6 +539,15 @@
             <a href="#nexus" class="border border-white/30 px-5 py-2 hover:bg-white hover:text-black transition-all"
                 data-i18n="nav.join">JOIN CREW</a>
 
+            <button id="openWalletModalBtn"
+                class="ml-4 border border-accent-blue/30 px-4 py-2 text-accent-blue hover:bg-accent-blue hover:text-black transition-all font-mono text-xs tracking-widest flex items-center gap-2 group relative overflow-hidden">
+                <div
+                    class="absolute inset-0 bg-accent-blue/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                </div>
+                <i class="ri-wallet-3-line relative z-10"></i>
+                <span id="navWalletText" class="relative z-10">CONNECT WALLET</span>
+            </button>
+
             <div class="lang-switch-container pointer-events-auto ml-8" onclick="toggleLanguage()">
                 <div class="lang-track">
                     <span class="lang-text left">EN</span>
@@ -838,6 +847,90 @@
 
     </main>
 
+    <div id="walletModal" class="fixed inset-0 z-[100] hidden opacity-0 transition-opacity duration-300">
+
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="toggleWalletModal(false)"></div>
+
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-1 pointer-events-none">
+            <div class="bg-black/90 border border-accent-blue/30 shadow-[0_0_50px_rgba(0,243,255,0.15)] relative pointer-events-auto transform transition-all duration-300 scale-95"
+                id="modalContent">
+
+                <div class="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-accent-blue"></div>
+                <div class="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-accent-blue"></div>
+
+                <div class="flex justify-between items-center p-6 border-b border-white/10">
+                    <h3 class="font-serif text-2xl text-white tracking-wider">CONNECT WALLET</h3>
+                    <button onclick="toggleWalletModal(false)" class="text-dim hover:text-tech-red transition-colors">
+                        <i class="ri-close-line text-2xl"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 grid grid-cols-2 gap-4">
+
+                    <button onclick="connectWallet('okx')"
+                        class="group flex flex-col items-center justify-center gap-3 p-4 border border-white/10 bg-white/5 hover:bg-white/10 hover:border-accent-blue transition-all duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-black border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <img src="https://play-lh.googleusercontent.com/N00SbjLJJrhg4hbdnkk3Llk2oedNNgCU29DvR9cpep7Lr0VkzvBkmLqajWNgFb0d7IOO"
+                                class="w-8 h-8 object-cover">
+                        </div>
+                        <div class="text-center">
+                            <div class="font-mono text-sm text-white group-hover:text-accent-blue">OKX Wallet</div>
+                            <div class="text-[10px] text-dim mt-1">Recommended</div>
+                        </div>
+                    </button>
+
+                    <button onclick="connectWallet('metamask')"
+                        class="group flex flex-col items-center justify-center gap-3 p-4 border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#E17726] transition-all duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3ymr3UNKopfI0NmUY95Dr-0589vG-91KuAA&s"
+                                class="w-8 h-8 object-contain">
+                        </div>
+                        <div class="text-center">
+                            <div class="font-mono text-sm text-white group-hover:text-[#E17726]">MetaMask</div>
+                            <div class="text-[10px] text-dim mt-1">Popular</div>
+                        </div>
+                    </button>
+
+                    <button onclick="connectWallet('wc')"
+                        class="group flex flex-col items-center justify-center gap-3 p-4 border border-white/10 bg-white/5 hover:bg-white/10 hover:border-[#3396FF] transition-all duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-[#3396FF]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="ri-qr-code-line text-2xl text-[#3396FF]"></i>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-mono text-sm text-white group-hover:text-[#3396FF]">WalletConnect</div>
+                            <div class="text-[10px] text-dim mt-1">Scan QR Code</div>
+                        </div>
+                    </button>
+
+                    <button onclick="connectWallet('all')"
+                        class="group flex flex-col items-center justify-center gap-3 p-4 border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white transition-all duration-300">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="ri-apps-line text-2xl text-white"></i>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-mono text-sm text-white">All Wallets</div>
+                            <div class="text-[10px] text-dim mt-1">View More</div>
+                        </div>
+                    </button>
+
+                </div>
+
+                <div class="p-4 bg-white/5 border-t border-white/10 text-center">
+                    <p class="font-sans text-[10px] text-dim">
+                        By connecting a wallet, you agree to the <a href="#"
+                            class="text-accent-blue hover:underline">Terms of Service</a>.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <script src="js/lang.js"></script>
     <script src="js/audio.js"></script>
 
@@ -947,16 +1040,122 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // === E. GSAP & Lenis ===
-        gsap.utils.toArray('.reveal-mask').forEach(mask => {
-            gsap.to(mask, {
-                height: 0, duration: 1.5, ease: "power4.inOut",
-                scrollTrigger: { trigger: mask.parentElement, start: "top 80%" }
-            });
+        // === F. Web3 Modal & Connection Logic ===
+        const modal = document.getElementById('walletModal');
+        const modalContent = document.getElementById('modalContent');
+        const navBtn = document.getElementById('openWalletModalBtn');
+        const navWalletText = document.getElementById('navWalletText');
+
+        // 1. 弹窗控制函数
+        function toggleWalletModal(show) {
+            if (show) {
+                modal.classList.remove('hidden');
+                // 强制重绘，为了动画效果
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                
+                // 等动画放完再隐藏
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // 绑定导航栏按钮点击事件
+        navBtn.addEventListener('click', () => {
+            // 如果已经连接了，点击就是断开或者查看详情（这里简化为不弹窗）
+            if (navWalletText.innerText.startsWith("0x")) {
+                alert("Wallet already connected: " + navWalletText.innerText);
+            } else {
+                toggleWalletModal(true);
+            }
         });
 
-        const lenis = new Lenis({ duration: 1.5, smooth: true });
-        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); } requestAnimationFrame(raf);
+        // 2. 连接逻辑 (复用之前的核心逻辑)
+        async function connectWallet(type) {
+            console.log("Selecting wallet:", type);
+            
+            // 本地环境检查
+            if (window.location.protocol === 'file:') {
+                alert("Error: Web3 requires a server environment (localhost or GitHub Pages).");
+                return;
+            }
+
+            let provider;
+            
+            if (type === 'okx') {
+                provider = window.okxwallet || window.ethereum;
+            } else if (type === 'metamask') {
+                if (window.ethereum?.providers) {
+                    provider = window.ethereum.providers.find(p => p.isMetaMask);
+                } else {
+                    provider = window.ethereum;
+                }
+            } else {
+                // 对于 WalletConnect 和 All Wallets，只是展示UI
+                alert("Module 'WalletConnect' is loading... (This is a demo)");
+                return;
+            }
+
+            if (!provider) {
+                 if(type === 'okx') {
+                    window.open('https://www.okx.com/web3', '_blank');
+                } else {
+                    window.open('https://metamask.io', '_blank');
+                }
+                return;
+            }
+
+            try {
+                // 关闭弹窗，显示连接中
+                toggleWalletModal(false);
+                navWalletText.innerText = "CONNECTING...";
+                
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                handleAccountsChanged(accounts);
+                
+            } catch (error) {
+                console.error(error);
+                navWalletText.innerText = "CONNECT WALLET";
+            }
+        }
+
+        function handleAccountsChanged(accounts) {
+            if (accounts && accounts.length > 0) {
+                const account = accounts[0];
+                const shortAddress = `${account.substring(0, 4)}...${account.substring(account.length - 4)}`;
+                
+                // 更新导航栏文字
+                navWalletText.innerText = shortAddress;
+                
+                // 激活按钮发光样式
+                navBtn.classList.add("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
+                navBtn.style.backgroundColor = "rgba(0, 243, 255, 0.05)";
+                
+                // 确保弹窗关闭
+                toggleWalletModal(false);
+            } else {
+                navWalletText.innerText = "CONNECT WALLET";
+                navBtn.classList.remove("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
+                navBtn.style.backgroundColor = "transparent";
+            }
+        }
+
+        // 自动重连
+        window.addEventListener('load', () => {
+            if (window.ethereum) {
+                window.ethereum.request({ method: 'eth_accounts' })
+                    .then(handleAccountsChanged)
+                    .catch(console.error);
+            }
+        });
 
     </script>
 </body>
