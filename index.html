@@ -959,6 +959,30 @@
 
                 </div>
 
+                <div id="disconnectWarningView"
+                    class="hidden p-8 flex flex-col items-center justify-center gap-6 text-center">
+
+                    <div
+                        class="w-16 h-16 rounded-full border border-tech-red/50 bg-tech-red/10 flex items-center justify-center shadow-[0_0_20px_rgba(255,59,48,0.2)] animate-pulse">
+                        <i class="ri-alert-line text-3xl text-tech-red"></i>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-serif text-xl text-white">DISCONNECTING</h4>
+                        <p class="text-dim text-xs leading-relaxed max-w-[240px] mx-auto">
+                            Front-end session will be terminated.<br>
+                            <span class="text-tech-red">Please manually revoke permissions in your wallet extension for
+                                full security.</span>
+                        </p>
+                    </div>
+
+                    <button onclick="confirmDisconnect()"
+                        class="w-full py-3 border border-white/20 text-white hover:bg-white hover:text-black hover:border-white transition-all font-mono text-xs tracking-widest uppercase cursor-pointer">
+                        I UNDERSTAND / DISCONNECT
+                    </button>
+
+                </div>
+
                 <div class="p-4 bg-white/5 border-t border-white/10 text-center">
                     <p class="font-sans text-[10px] text-dim">
                         By connecting a wallet, you agree to the <a href="#"
