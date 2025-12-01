@@ -1349,15 +1349,14 @@
         const networkName = document.getElementById('networkName');
         const networkDot = document.getElementById('networkDot');
 
-        // === 核心资产：链 ID 字典 ===
+        // === 核心资产：链 ID 字典 (保留这一份！) ===
         const chainMap = {
-            '0x1': { name: 'ETHEREUM', color: '#00ff00' },          // 主网 (绿)
-            '0xaa36a7': { name: 'SEPOLIA', color: '#ffd700' },      // 测试网 (黄)
-            '0x38': { name: 'BSC', color: '#F0B90B' },              // 币安链 (金)
-            '0x89': { name: 'POLYGON', color: '#8247E5' },          // 马蹄链 (紫)
-            '0x42': { name: 'OKTC', color: '#000000' },             // OKX 老链
-            '0xc6': { name: 'X LAYER', color: '#00f3ff' },          // OKX ZK Layer (重点!)
-            '0xe15503': { name: 'X LAYER TEST', color: '#00f3ff' }  // OKX 测试网
+            '0x1': { name: 'ETHEREUM', color: '#00ff00' },          // 主网
+            '0xaa36a7': { name: 'SEPOLIA', color: '#ffd700' },      // Sepolia 测试网
+            '0x38': { name: 'BSC', color: '#F0B90B' },              // 币安链
+            '0x89': { name: 'POLYGON', color: '#8247E5' },          // 马蹄链
+            '0x7a0': { name: 'OKX X LAYER', color: '#00f3ff' },     // ✅ 正确：1952 (测试网)
+            '0x42': { name: 'OKTC', color: '#000000' }              // OKX 老链
         };
 
         // 1. 弹窗控制
@@ -1667,47 +1666,112 @@
             });
         }
 
-        // === L. 代币系统逻辑 (Token System) ===
+        // === F. Web3 Modal & Connection Logic (OKX X Layer Version) ===
 
-        // ⚠️⚠️⚠️ 这里填你第二次部署的新合约地址！ ⚠️⚠️⚠️
-        const TOKEN_CONTRACT_ADDRESS = "0x93b22384DD319e68d09f6762F5Ce6B89Db2Ee633";
+        // ⚠️⚠️⚠️ 你的新合约地址 (在 X Layer 上部署的那个) ⚠️⚠️⚠️
+        const TOKEN_CONTRACT_ADDRESS = "0x124d8ADac83590bC89A84a763121269a3276567C";
 
-        // 1. 领币函数 (强制锁网版)
+        // 目标网络: OKX X Layer Testnet (1952 -> 0x7a0)
+        const TARGET_CHAIN_ID = '0x7a0';
+
+
+        // 1. 弹窗控制
+        function toggleWalletModal(show) {
+            if (show) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        navBtn.addEventListener('click', () => toggleWalletModal(true));
+
+        // 2. 连接钱包 (通用)
+        async function connectWallet(type) {
+            if (window.location.protocol === 'file:') return alert("Web3 requires a server environment.");
+
+            let provider = null;
+            if (type === 'okx') {
+                if (typeof window.okxwallet !== 'undefined') provider = window.okxwallet;
+                else if (typeof window.ethereum !== 'undefined' && window.ethereum.isOkxWallet) provider = window.ethereum;
+            } else if (type === 'metamask') {
+                if (window.ethereum) provider = window.ethereum;
+            } else {
+                return alert("Module loading...");
+            }
+
+            if (!provider) {
+                if (type === 'okx') window.open('https://www.okx.com/web3', '_blank');
+                else window.open('https://metamask.io/', '_blank');
+                return;
+            }
+
+            try {
+                navWalletText.innerText = "CONNECTING...";
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
+                handleAccountsChanged(accounts);
+            } catch (error) {
+                console.error("Connection Error:", error);
+                navWalletText.innerText = "CONNECT WALLET";
+            }
+        }
+
+        // 3. 领币函数 (强制切到 X Layer)
         async function claimTokens() {
             const btn = document.getElementById('claimBtn');
             const status = document.getElementById('claimStatus');
 
             if (!window.ethereum) return alert("Please install wallet!");
 
-            // 👇👇👇 第一步：先检查网络，不对就强制切 👇👇👇
+            // --- 强制切网逻辑 Start ---
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-
-            // 0xaa36a7 是 Sepolia 的身份证号
-            if (chainId !== '0xaa36a7') {
+            if (chainId !== TARGET_CHAIN_ID) {
                 try {
                     await window.ethereum.request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0xaa36a7' }],
+                        params: [{ chainId: TARGET_CHAIN_ID }],
                     });
                 } catch (switchError) {
-                    // 如果切换失败 (比如用户没有添加Sepolia)，报错
-                    console.error(switchError);
-                    return alert("网络错误！\n请打开 MetaMask，手动切换到 'Sepolia' 测试网再试。");
+                    // 如果用户没添加过 X Layer，自动帮他添加
+                    if (switchError.code === 4902) {
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_addEthereumChain',
+                                params: [{
+                                    chainId: TARGET_CHAIN_ID,
+                                    chainName: 'X Layer Testnet',
+                                    rpcUrls: ['https://testrpc.xlayer.tech'],
+                                    nativeCurrency: { name: 'OKB', symbol: 'OKB', decimals: 18 },
+                                    blockExplorerUrls: ['https://www.oklink.com/xlayer-test']
+                                }],
+                            });
+                        } catch (addError) {
+                            return alert("无法添加网络，请手动切换到 OKX X Layer Testnet (Chain ID 1952)");
+                        }
+                    } else {
+                        return alert("请切换网络到 X Layer Testnet!");
+                    }
                 }
             }
-            // 👆👆👆 锁网结束 👆👆👆
+            // --- 强制切网逻辑 End ---
 
             try {
-                // 合约地址 (请再次确认这里是你最新的那个合约地址)
-                // const TOKEN_CONTRACT_ADDRESS = "0x..." 
-
                 const DATA_HEX = "0x48c54b9d"; // claimTokens()
 
-                status.innerText = "Processing request...";
+                status.innerText = "Processing on X Layer...";
                 btn.disabled = true;
                 btn.classList.add('opacity-50');
 
-                // 发起交易 (不带 gas 参数，让钱包在 Sepolia 上自动算)
                 const txHash = await window.ethereum.request({
                     method: 'eth_sendTransaction',
                     params: [{
@@ -1717,15 +1781,15 @@
                     }]
                 });
 
-                console.log("Tx Hash:", txHash);
-                status.innerText = "MINTING... Please wait.";
+                console.log("X Layer Tx:", txHash);
+                status.innerText = "MINTING... Waiting for block.";
                 status.style.color = "#00f3ff";
 
                 setTimeout(() => {
-                    status.innerText = "SUCCESS! Check your wallet.";
+                    status.innerText = "SUCCESS! 100 $HZN received.";
                     status.style.color = "#00ff00";
                     btn.innerText = "CLAIMED";
-                }, 5000);
+                }, 4000);
 
             } catch (error) {
                 console.error(error);
@@ -1736,56 +1800,118 @@
             }
         }
 
-        // 2. 添加代币到钱包 (Add to MetaMask)
+        // 4. 添加代币到钱包 (X Layer 版)
         async function addTokenToWallet() {
-            // A. 基础检查
-            if (!window.ethereum) return alert("Please install wallet!");
-
-            // 确保你已经填了合约地址
-            if (typeof TOKEN_CONTRACT_ADDRESS === 'undefined' || !TOKEN_CONTRACT_ADDRESS) {
-                return alert("合约地址未配置！");
-            }
+            if (!window.ethereum) return alert("Wallet not found!");
+            if (!TOKEN_CONTRACT_ADDRESS) return alert("Contract address missing!");
 
             try {
-                // B. 先检查网络 (强制切到 Sepolia)
+                // 也要检查网络
                 const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                if (chainId !== '0xaa36a7') {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: '0xaa36a7' }],
-                        });
-                    } catch (switchError) {
-                        console.error(switchError);
-                        return alert("请先切换到 Sepolia 测试网！");
-                    }
-                }
+                if (chainId !== TARGET_CHAIN_ID) return alert("请先切换到 X Layer Testnet!");
 
-                // C. 发送添加请求
                 const wasAdded = await window.ethereum.request({
                     method: 'wallet_watchAsset',
                     params: {
                         type: 'ERC20',
                         options: {
-                            address: TOKEN_CONTRACT_ADDRESS, // 自动引用上面的地址
-                            symbol: 'HZN',                   // 代币符号
-                            decimals: 18,                    // 小数位
-                            image: 'https://booyuu.top/favicon.png', // 你的头像
+                            address: TOKEN_CONTRACT_ADDRESS,
+                            symbol: 'HZN',
+                            decimals: 18,
+                            image: 'https://booyuu.top/favicon.png',
                         },
                     },
                 });
-
-                if (wasAdded) {
-                    console.log('Token added!');
-                } else {
-                    console.log('User cancelled');
-                }
-
             } catch (error) {
                 console.error("Add token failed:", error);
-                alert("添加失败，请检查控制台。");
             }
         }
+
+        // 5. 状态管理与 UI 更新
+        async function handleAccountsChanged(accounts) {
+            if (accounts && accounts.length > 0) {
+                const account = accounts[0];
+                navWalletText.innerText = `${account.substring(0, 4)}...${account.substring(account.length - 4)}`;
+                navBtn.classList.add("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
+                navBtn.style.backgroundColor = "rgba(0, 243, 255, 0.05)";
+
+                if (walletGrid) walletGrid.classList.add('hidden');
+                if (disconnectWarningView) disconnectWarningView.classList.add('hidden');
+                if (connectedView) connectedView.classList.remove('hidden');
+
+                if (fullAddressDisplay) fullAddressDisplay.innerText = account;
+                if (cancelSwitchBtn) cancelSwitchBtn.classList.add('hidden');
+
+                // 检查当前网络并更新雷达
+                if (window.ethereum) {
+                    try {
+                        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                        updateNetworkUI(chainId);
+                    } catch (err) { console.error(err); }
+                }
+
+                toggleWalletModal(false);
+            } else {
+                navWalletText.innerText = "CONNECT WALLET";
+                navBtn.classList.remove("border-accent-blue", "shadow-[0_0_15px_rgba(0,243,255,0.3)]");
+                navBtn.style.backgroundColor = "transparent";
+
+                if (walletGrid) walletGrid.classList.remove('hidden');
+                if (connectedView) connectedView.classList.add('hidden');
+                if (disconnectWarningView) disconnectWarningView.classList.add('hidden');
+                if (cancelSwitchBtn) cancelSwitchBtn.classList.add('hidden');
+            }
+        }
+
+        function updateNetworkUI(chainId) {
+            if (!networkName || !networkDot) return;
+            const chainInfo = chainMap[chainId];
+            if (chainInfo) {
+                networkName.innerText = chainInfo.name;
+                networkName.style.color = "rgba(255,255,255,0.9)";
+                networkDot.style.backgroundColor = chainInfo.color;
+                networkDot.style.boxShadow = `0 0 8px ${chainInfo.color}`;
+            } else {
+                networkName.innerText = `UNKNOWN (${chainId})`;
+                networkName.style.color = "#888";
+                networkDot.style.backgroundColor = "#666";
+                networkDot.style.boxShadow = "none";
+            }
+        }
+
+        // 辅助函数
+        function disconnectWallet() {
+            connectedView.classList.add('hidden');
+            disconnectWarningView.classList.remove('hidden');
+        }
+        function confirmDisconnect() {
+            toggleWalletModal(false);
+            setTimeout(() => handleAccountsChanged([]), 300);
+        }
+        function switchWallet() {
+            connectedView.classList.add('hidden');
+            walletGrid.classList.remove('hidden');
+            if (cancelSwitchBtn) cancelSwitchBtn.classList.remove('hidden');
+        }
+        function cancelSwitch() {
+            walletGrid.classList.add('hidden');
+            connectedView.classList.remove('hidden');
+            if (cancelSwitchBtn) cancelSwitchBtn.classList.add('hidden');
+        }
+
+        // 监听器
+        window.addEventListener('load', () => {
+            if (window.ethereum) {
+                window.ethereum.request({ method: 'eth_accounts' })
+                    .then(handleAccountsChanged)
+                    .catch(console.error);
+
+                window.ethereum.on('chainChanged', (chainId) => {
+                    console.log("Network switched to:", chainId);
+                    updateNetworkUI(chainId);
+                });
+            }
+        });
     </script>
 </body>
 
