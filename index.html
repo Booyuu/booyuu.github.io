@@ -1681,7 +1681,7 @@
 
             // 👇👇👇 第一步：先检查网络，不对就强制切 👇👇👇
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-            
+
             // 0xaa36a7 是 Sepolia 的身份证号
             if (chainId !== '0xaa36a7') {
                 try {
@@ -1700,7 +1700,7 @@
             try {
                 // 合约地址 (请再次确认这里是你最新的那个合约地址)
                 // const TOKEN_CONTRACT_ADDRESS = "0x..." 
-                
+
                 const DATA_HEX = "0x48c54b9d"; // claimTokens()
 
                 status.innerText = "Processing request...";
@@ -1720,7 +1720,7 @@
                 console.log("Tx Hash:", txHash);
                 status.innerText = "MINTING... Please wait.";
                 status.style.color = "#00f3ff";
-                
+
                 setTimeout(() => {
                     status.innerText = "SUCCESS! Check your wallet.";
                     status.style.color = "#00ff00";
@@ -1733,6 +1733,57 @@
                 status.style.color = "red";
                 btn.disabled = false;
                 btn.classList.remove('opacity-50');
+            }
+        }
+
+        // 2. 添加代币到钱包 (Add to MetaMask)
+        async function addTokenToWallet() {
+            // A. 基础检查
+            if (!window.ethereum) return alert("Please install wallet!");
+
+            // 确保你已经填了合约地址
+            if (typeof TOKEN_CONTRACT_ADDRESS === 'undefined' || !TOKEN_CONTRACT_ADDRESS) {
+                return alert("合约地址未配置！");
+            }
+
+            try {
+                // B. 先检查网络 (强制切到 Sepolia)
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                if (chainId !== '0xaa36a7') {
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0xaa36a7' }],
+                        });
+                    } catch (switchError) {
+                        console.error(switchError);
+                        return alert("请先切换到 Sepolia 测试网！");
+                    }
+                }
+
+                // C. 发送添加请求
+                const wasAdded = await window.ethereum.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: TOKEN_CONTRACT_ADDRESS, // 自动引用上面的地址
+                            symbol: 'HZN',                   // 代币符号
+                            decimals: 18,                    // 小数位
+                            image: 'https://booyuu.top/favicon.png', // 你的头像
+                        },
+                    },
+                });
+
+                if (wasAdded) {
+                    console.log('Token added!');
+                } else {
+                    console.log('User cancelled');
+                }
+
+            } catch (error) {
+                console.error("Add token failed:", error);
+                alert("添加失败，请检查控制台。");
             }
         }
     </script>
