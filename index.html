@@ -1718,32 +1718,50 @@
         }
 
         // 2. 添加代币到钱包 (Add to MetaMask)
+        // 2. 添加代币到钱包 (修复版 - 带诊断)
         async function addTokenToWallet() {
-            try {
-                if (!window.ethereum) return alert("Wallet not found!");
+            // A. 检查钱包是否安装
+            if (!window.ethereum) return alert("未检测到钱包插件！");
 
+            // B. 检查地址是否填了
+            // 这里的 TOKEN_CONTRACT_ADDRESS 必须是你 JS 最上面定义的那个
+            if (!TOKEN_CONTRACT_ADDRESS || TOKEN_CONTRACT_ADDRESS.length < 42) {
+                return alert("合约地址配置错误！请检查代码里的 TOKEN_CONTRACT_ADDRESS。");
+            }
+
+            try {
+                console.log("尝试添加代币:", TOKEN_CONTRACT_ADDRESS);
+
+                // C. 发送请求
                 const wasAdded = await window.ethereum.request({
                     method: 'wallet_watchAsset',
                     params: {
-                        type: 'ERC20',
+                        type: 'ERC20', 
                         options: {
-                            address: TOKEN_CONTRACT_ADDRESS, // 自动引用上面的地址
-                            symbol: 'HZN',                   // 代币符号
+                            address: TOKEN_CONTRACT_ADDRESS, // 合约地址
+                            symbol: 'HZN',                   // 符号
                             decimals: 18,                    // 小数位
-                            image: 'https://booyuu.top/favicon.png', // 自动引用你的头像
+                            image: 'https://booyuu.top/favicon.png', // 头像
                         },
                     },
                 });
 
                 if (wasAdded) {
-                    console.log('Token added!');
+                    alert("成功！HZN 代币已添加到你的钱包列表。");
+                } else {
+                    console.log('用户取消了添加');
                 }
             } catch (error) {
-                console.error(error);
-                alert("Add token failed. Please ensure you are on the correct network.");
+                console.error("添加失败:", error);
+                
+                // D. 智能错误分析
+                if (error.code === 4001) {
+                    alert("你取消了操作。");
+                } else {
+                    alert(`添加失败！\n可能原因：\n1. 你的钱包没有切换到 Sepolia 测试网。\n2. 合约地址填错了 (当前: ${TOKEN_CONTRACT_ADDRESS})。\n请按 F12 看控制台详情。`);
+                }
             }
         }
-
     </script>
 </body>
 
