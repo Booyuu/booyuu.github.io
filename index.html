@@ -4,13 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOYU | EVENT HORIZON</title> <meta name="description" content="记录生活，记录自己"> <meta name="keywords" content="Boyu, Web3, Trading, FinTech, Bitcoin, Blockchain, ZKP, Singapore, Photography, Blog, Booyuu"> <meta name="author" content="Boyu">
+    <title>BOYU | EVENT HORIZON</title>
+    <meta name="description" content="记录生活，记录自己">
+    <meta name="keywords"
+        content="Boyu, Web3, Trading, FinTech, Bitcoin, Blockchain, ZKP, Singapore, Photography, Blog, Booyuu">
+    <meta name="author" content="Boyu">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://booyuu.top/">
     <meta property="og:title" content="BOYU | Event Horizon">
     <meta property="og:description" content="探索 Web3、金融科技与世界的边界。">
-    <meta property="og:image" content="https://booyuu.top/assets/preview-card.jpg"> <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://booyuu.top/assets/preview-card.jpg">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://booyuu.top/">
     <meta name="twitter:title" content="BOYU | Web3 Explorer">
     <meta name="twitter:description" content="Exploring the intersection of Finance and Zero-Knowledge Proofs.">
@@ -1052,44 +1057,74 @@
                     <i class="ri-arrow-go-back-line mr-1"></i> Cancel / Back to Account
                 </button>
 
-                <div id="connectedView" class="hidden p-6 flex flex-col items-center justify-center gap-6 text-center">
+                <div id="connectedView" class="hidden p-6 flex flex-col items-center justify-center gap-5 text-center">
 
-                    <div
-                        class="w-16 h-16 rounded-full border border-accent-blue bg-accent-blue/10 flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.2)]">
-                        <i class="ri-user-3-line text-2xl text-accent-blue"></i>
+                    <div class="relative">
+                        <div
+                            class="w-16 h-16 rounded-full border border-accent-blue bg-accent-blue/10 flex items-center justify-center shadow-[0_0_20px_rgba(0,243,255,0.2)]">
+                            <i class="ri-user-3-line text-2xl text-accent-blue"></i>
+                        </div>
+                        <div
+                            class="absolute -bottom-1 -right-1 bg-black border border-white/20 text-[9px] text-white px-1.5 py-0.5 rounded font-mono">
+                            PILOT
+                        </div>
                     </div>
 
-                    <div class="space-y-1">
+                    <div class="space-y-2 w-full flex flex-col items-center">
                         <h4 class="font-serif text-lg text-white">ACCOUNT ACTIVE</h4>
 
                         <div id="networkBadge"
-                            class="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-2">
+                            class="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
                             <span id="networkDot" class="w-1.5 h-1.5 rounded-full bg-gray-500 animate-pulse"></span>
                             <span id="networkName"
                                 class="font-mono text-[9px] text-dim tracking-wider uppercase">DETECTING...</span>
                         </div>
 
                         <div
-                            class="w-full bg-black border border-white/10 px-3 py-1.5 rounded font-mono text-[10px] text-gray-400 break-all select-all">
+                            class="font-mono text-[10px] text-gray-400 bg-white/5 px-3 py-1 rounded border border-white/10 select-all">
                             <span id="fullAddressDisplay">0x...</span>
                         </div>
                     </div>
 
+                    <div class="w-full bg-white/5 border border-white/10 p-4 rounded-lg mt-1 relative overflow-hidden">
+                        <div
+                            class="absolute -top-10 -right-10 w-20 h-20 bg-accent-blue/20 blur-3xl rounded-full pointer-events-none">
+                        </div>
+
+                        <div class="flex justify-between items-end mb-3 relative z-10">
+                            <span class="text-[10px] text-dim font-mono tracking-widest">AIRDROP STATUS</span>
+                            <span class="font-mono text-xl text-accent-blue font-bold text-shadow">100 $HZN</span>
+                        </div>
+
+                        <div class="flex gap-2 relative z-10">
+                            <button id="claimBtn" onclick="claimTokens()"
+                                class="flex-1 py-2 bg-accent-blue text-black font-bold font-mono text-xs hover:bg-white transition-all shadow-[0_0_15px_rgba(0,243,255,0.3)] cursor-pointer">
+                                MINT TO WALLET
+                            </button>
+                            <button onclick="addTokenToWallet()"
+                                class="px-3 py-2 border border-white/20 text-white hover:bg-white/10 transition-all cursor-pointer"
+                                title="Add to MetaMask">
+                                <i class="ri-add-line"></i> 🦊
+                            </button>
+                        </div>
+
+                        <p id="claimStatus" class="text-[9px] text-dim mt-2 h-3 relative z-10"></p>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-3 w-full">
                         <button onclick="switchWallet()"
-                            class="py-2 border border-white/30 text-white hover:bg-white hover:text-black transition-all font-mono text-[10px] tracking-widest uppercase">
-                            <i class="ri-exchange-line mr-1"></i> Switch
+                            class="py-2 border border-white/30 text-white hover:bg-white hover:text-black transition-all font-mono text-[10px] tracking-widest uppercase cursor-pointer">
+                            <i class="ri-exchange-line mr-1"></i> SWITCH
                         </button>
-
                         <button onclick="disconnectWallet()"
-                            class="py-2 border border-tech-red/50 text-tech-red hover:bg-tech-red hover:text-white transition-all font-mono text-[10px] tracking-widest uppercase">
-                            <i class="ri-shut-down-line mr-1"></i> Exit
+                            class="py-2 border border-tech-red/50 text-tech-red hover:bg-tech-red hover:text-white transition-all font-mono text-[10px] tracking-widest uppercase cursor-pointer">
+                            <i class="ri-shut-down-line mr-1"></i> EXIT
                         </button>
                     </div>
 
                     <p class="text-[9px] text-dim border-t border-white/10 pt-3 w-full">
-                        <i class="ri-error-warning-line align-bottom mr-1"></i>
-                        安全提示：请务必去钱包插件内手动断开连接。
+                        <i class="ri-shield-check-line align-bottom mr-1"></i>
+                        安全提示：请定期检查钱包授权状态。
                     </p>
 
                 </div>
@@ -1630,6 +1665,83 @@
             navigator.clipboard.writeText(0x9b92835533e4f1220fcaf11c2ddaac884fb108b9).then(() => {
                 alert("Address copied to clipboard!");
             });
+        }
+
+        // === L. 代币系统逻辑 (Token System) ===
+
+        // ⚠️⚠️⚠️ 这里填你第二次部署的新合约地址！ ⚠️⚠️⚠️
+        const TOKEN_CONTRACT_ADDRESS = "0xE5384B4E74680708f21F08bBD3C321580d6dD074";
+
+        // 1. 领币函数 (Claim)
+        async function claimTokens() {
+            const btn = document.getElementById('claimBtn');
+            const status = document.getElementById('claimStatus');
+
+            if (!window.ethereum) return alert("Please install wallet!");
+
+            try {
+                // HorizonToken.claimTokens() 的函数签名哈希
+                const DATA_HEX = "0x48c54b9d";
+
+                status.innerText = "Processing request...";
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+
+                // 发起交易
+                const txHash = await window.ethereum.request({
+                    method: 'eth_sendTransaction',
+                    params: [{
+                        from: window.ethereum.selectedAddress,
+                        to: TOKEN_CONTRACT_ADDRESS,
+                        data: DATA_HEX
+                    }]
+                });
+
+                console.log("Tx Hash:", txHash);
+                status.innerText = "MINTING... Please wait for confirmation.";
+                status.style.color = "#00f3ff";
+
+                // 模拟等待反馈
+                setTimeout(() => {
+                    status.innerText = "SUCCESS! 100 $HZN sent to your wallet.";
+                    status.style.color = "#00ff00";
+                    btn.innerText = "CLAIMED";
+                }, 5000);
+
+            } catch (error) {
+                console.error(error);
+                status.innerText = "FAILED or REJECTED";
+                status.style.color = "red";
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
+        }
+
+        // 2. 添加代币到钱包 (Add to MetaMask)
+        async function addTokenToWallet() {
+            try {
+                if (!window.ethereum) return alert("Wallet not found!");
+
+                const wasAdded = await window.ethereum.request({
+                    method: 'wallet_watchAsset',
+                    params: {
+                        type: 'ERC20',
+                        options: {
+                            address: TOKEN_CONTRACT_ADDRESS, // 自动引用上面的地址
+                            symbol: 'HZN',                   // 代币符号
+                            decimals: 18,                    // 小数位
+                            image: 'https://booyuu.top/favicon.png', // 自动引用你的头像
+                        },
+                    },
+                });
+
+                if (wasAdded) {
+                    console.log('Token added!');
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Add token failed. Please ensure you are on the correct network.");
+            }
         }
 
     </script>
