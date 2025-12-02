@@ -1,185 +1,295 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - BOYU</title>
-    <meta name="description" content="记录，分享，学习，精进。">
-
-    <!-- Favicon (你要求保留的) -->
-    <link rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%23050505%22 stroke=%22white%22 stroke-width=%222%22/><circle cx=%2250%22 cy=%2250%22 r=%2215%22 fill=%22%2300f3ff%22 filter=%22blur(2px)%22/></svg>">
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;600&display=swap" rel="stylesheet">
-
-    <!-- Tailwind -->
+    <title>BLOG | NEURAL ARCHIVE</title>
+    <link rel="icon" type="image/png" href="https://booyuu.top/favicon.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Rajdhani:wght@500&family=Space+Grotesk:wght@300;500&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-
-    <!-- GSAP + Lenis -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
         tailwind.config = {
-            darkMode: "class",
+            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        bg: "#050505",
-                        dim: "#888",
-                        "accent-blue": "#00f3ff",
-                        "accent-red": "#ff2a2a"
-                    },
+                    colors: { bg: '#050505', 'accent-blue': '#00f3ff' },
                     fontFamily: {
-                        serif: ['"Cinzel"', "serif"],
-                        mono: ['"Space Grotesk"', "monospace"],
-                        sans: ['"Inter"', "sans-serif"]
-                    }
+                        serif: ['"Cinzel"', 'serif'],
+                        mono: ['"Space Grotesk"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
                 }
             }
         }
     </script>
-
     <style>
         body {
-            background-color: #020202;
-            color: #eaeaea;
-        }
-        ::-webkit-scrollbar { width: 0; }
-
-        /* 星空背景 */
-        #noise-layer {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.08;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+            background-color: #050505;
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
         }
 
-        /* 时间轴 */
-        .timeline-dot {
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .hero-header {
+            height: 80vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+            animation: zoomIn 20s infinite alternate;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
+
+
+        .hero-title {
             position: absolute;
-            left: -4px;
-            top: 1.4rem;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            border: 1px solid #00f3ff;
-            background: #050505;
-            box-shadow: 0 0 10px #00f3ff;
-            transition: 0.3s;
-        }
-        .group:hover .timeline-dot {
-            background: #00f3ff;
+            bottom: 10%;
+            left: 5%;
+            z-index: 10;
         }
 
-        /* === 🎵 音乐波形动画 (你指定保留的) === */
-        .wave-bar { transition: all 0.2s ease; transform-origin: bottom; }
-        .playing .wave-bar { animation: sound-wave 0.8s infinite ease-in-out alternate; background-color: #00f3ff !important; }
-        .playing .wave-bar:nth-child(1){ animation-delay:0s; }
-        .playing .wave-bar:nth-child(2){ animation-delay:0.1s; }
-        .playing .wave-bar:nth-child(3){ animation-delay:0.2s; }
-        .playing .wave-bar:nth-child(4){ animation-delay:0.3s; }
+        .meta-box {
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 2rem;
+        }
+
+        .filter-btn {
+            display: block;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+            font-family: 'Space Grotesk';
+            font-size: 14px;
+            margin-bottom: 1rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            color: #00f3ff;
+            padding-left: 10px;
+            border-left: 2px solid #00f3ff;
+        }
+
+        /* 简单的淡入动画 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* === 🎵 音乐波形动画 (补丁) === */
+        .wave-bar {
+            transition: all 0.2s ease;
+            transform-origin: bottom;
+        }
+
+        /* 播放时跳动 */
+        .playing .wave-bar {
+            animation: sound-wave 0.8s infinite ease-in-out alternate;
+            background-color: #00f3ff !important;
+        }
+
+        /* 错开节奏 */
+        .playing .wave-bar:nth-child(1) {
+            animation-delay: 0.0s;
+        }
+
+        .playing .wave-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .playing .wave-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .playing .wave-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
 
         @keyframes sound-wave {
-            0%{ height:2px; }
-            100%{ height:12px; }
+            0% {
+                height: 2px;
+            }
+
+            100% {
+                height: 12px;
+            }
         }
     </style>
 </head>
 
 <body>
-<div id="noise-layer"></div>
 
-<!-- 顶部导航 -->
-<nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
-    <div class="pointer-events-auto flex items-center gap-6">
-        <a href="../index.html"
-            class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2">
-            <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i> RETURN TO BASE
-        </a>
-        <div class="h-4 w-[1px] bg-white/20"></div>
-        <div id="audio-slot"></div>
-    </div>
-</nav>
+    <nav class="fixed top-0 w-full p-8 z-50 flex justify-between items-center mix-blend-difference pointer-events-none">
 
-<!-- 主体内容 -->
-<main class="relative z-10 max-w-4xl mx-auto px-8 pt-40 pb-20">
+        <div class="pointer-events-auto flex items-center gap-6">
 
-    <!-- 标题 -->
-    <div class="mb-24">
-        <div class="inline-flex items-center gap-2 px-3 py-1 border border-accent-blue/30 rounded-full mb-6">
-            <span class="w-1.5 h-1.5 bg-accent-blue rounded-full animate-pulse"></span>
-            <span class="font-mono text-[10px] text-accent-blue tracking-widest">DATABASE ONLINE</span>
-        </div>
-        <h1 class="font-serif text-6xl md:text-8xl text-white mb-6">TRANSMISSIONS</h1>
-        <p class="font-sans text-dim text-lg max-w-xl">星际航行日志、交易思考、认知实验与未来学记录。</p>
-    </div>
+            <a href="../index.html"
+                class="font-mono text-xs tracking-widest hover:text-white text-gray-400 transition-colors group flex items-center gap-2"
+                data-i18n="nav.back">
+                <i class="ri-arrow-left-line group-hover:-translate-x-1 transition-transform"></i> RETURN TO BASE
+            </a>
 
-    <!-- 时间轴 -->
-    <section class="relative pl-10 md:pl-16 border-l border-white/10">
-        
-        <!-- 年份 -->
-        <div class="font-mono text-4xl text-white/20 absolute -left-20 top-0 rotate-90">2025</div>
+            <div class="h-4 w-[1px] bg-white/20"></div>
 
-        <div class="space-y-24">
-
-            <!-- Article 1 -->
-            <article class="relative group cursor-pointer"
-                     onclick="location.href='post-01.html'">
-                <div class="timeline-dot"></div>
-                <div class="font-mono text-xs text-accent-blue mb-3 tracking-widest">NOV 28 // SECTOR 03</div>
-                <h2 class="font-serif text-3xl md:text-4xl text-white mb-4 group-hover:text-accent-blue transition-colors">
-                    The Future of Algorithmic Art
-                </h2>
-                <p class="font-sans text-dim leading-relaxed line-clamp-3 pr-8">
-                    生成式艺术如何重塑现代网页体验，感性与算法的边界如何被重新定义。
-                </p>
-
-                <div class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-blue opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
-                    READ LOG <i class="ri-arrow-right-line"></i>
-                </div>
-            </article>
-
-            <!-- Article 2 -->
-            <article class="relative group cursor-pointer"
-                     onclick="location.href='post-02.html'">
-                <div class="timeline-dot"
-                     style="border-color:#ff2a2a; box-shadow:0 0 10px #ff2a2a;"></div>
-                <div class="font-mono text-xs text-accent-red mb-3 tracking-widest">OCT 15 // SECTOR 02</div>
-                <h2 class="font-serif text-3xl md:text-4xl text-white mb-4 group-hover:text-accent-red transition-colors">
-                    Finding Alpha in Bear Markets
-                </h2>
-                <p class="font-sans text-dim leading-relaxed line-clamp-3 pr-8">
-                    如何在迷雾行情中保持清醒、识别机会并稳健执行策略。
-                </p>
-                
-                <div class="mt-6 flex items-center gap-2 text-xs font-mono text-accent-red opacity-0 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0">
-                    ACCESS DENIED <i class="ri-lock-line"></i>
-                </div>
-            </article>
+            <div id="audio-slot"></div>
 
         </div>
-    </section>
-</main>
 
-<!-- 动画 -->
-<script>
-    const lenis = new Lenis({ duration: 1.2, smooth: true });
-    function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
+        <div></div>
 
-    gsap.from("h1, p", { y:40, opacity:0, duration:1, stagger:0.2, ease:"power3.out" });
-    gsap.from("article", { x:-30, opacity:0, duration:0.8, stagger:0.26, delay:0.4, ease:"power2.out" });
-</script>
+    </nav>
 
-<!-- Audio -->
-<script src="../js/audio.js"></script>
+    <header class="hero-header">
+        <img src="https://images.unsplash.com/photo-1530883154101-ce08df5ec9be?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            class="hero-img">
+        <div class="hero-title">
+            <div class="font-mono text-xs tracking-[0.5em] text-accent-blue mb-4">SYSTEM LOGS</div>
+            <h1 class="font-serif text-6xl md:text-7xl text-white leading-none">NEURAL<br>ARCHIVE</h1>
+        </div>
+    </header>
+
+    <main class="max-w-[1400px] mx-auto px-6 py-24">
+        <div class="grid md:grid-cols-12 gap-16">
+
+            <div class="md:col-span-3 md:order-last mb-12 md:mb-0">
+                <div class="sticky top-32 meta-box">
+                    <h3 class="font-mono text-xs text-dim tracking-widest mb-6">FILTER FREQUENCY</h3>
+
+                    <div class="space-y-2">
+                        <span class="filter-btn active" onclick="filterPosts('all', this)">[ ALL LOGS ]</span>
+                        <span class="filter-btn" onclick="filterPosts('travel', this)">[ TRAVEL ]</span>
+                        <span class="filter-btn" onclick="filterPosts('code', this)">[ WEB3 / CODE ]</span>
+                        <span class="filter-btn" onclick="filterPosts('photo', this)">[ VISUALS ]</span>
+                    </div>
+
+                    <div class="mt-12">
+                        <h3 class="font-mono text-xs text-dim tracking-widest mb-4">TOTAL ENTRIES</h3>
+                        <span class="font-serif text-4xl text-white">03</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-9 space-y-16" id="posts-container">
+
+                <article class="post-item group cursor-pointer fade-in" data-category="travel"
+                    onclick="location.href='../travel/travel.html'">
+                    <div class="overflow-hidden mb-4 border border-white/10 relative">
+                        <div
+                            class="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 text-[10px] font-mono text-white border border-white/20 z-10">
+                            TRAVEL</div>
+                        <img src="https://images.unsplash.com/photo-1476610182048-b716b8518aae?q=80&w=1200"
+                            class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700">
+                    </div>
+                    <div class="flex justify-between items-baseline border-b border-white/20 pb-4 mb-4">
+                        <h2 class="font-serif text-3xl text-white group-hover:text-accent-blue transition-colors">
+                            SILENCE IN ICELAND</h2>
+                        <span class="font-mono text-xs text-dim">2025.09</span>
+                    </div>
+                    <p class="text-gray-400 text-sm line-clamp-2">
+                        冰岛的荒原有一种寂静的压迫感。穿越黑色沙滩与极光爆发的夜晚，寻找那架著名的 DC-3 飞机残骸。
+                    </p>
+                </article>
+
+                <article class="post-item group cursor-pointer fade-in" data-category="code"
+                    onclick="location.href='#'">
+                    <div class="overflow-hidden mb-4 border border-white/10 relative">
+                        <div
+                            class="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 text-[10px] font-mono text-accent-blue border border-accent-blue/30 z-10">
+                            CODE</div>
+                        <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1200"
+                            class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700">
+                    </div>
+                    <div class="flex justify-between items-baseline border-b border-white/20 pb-4 mb-4">
+                        <h2 class="font-serif text-3xl text-white group-hover:text-accent-blue transition-colors">THE
+                            WEB3 AWAKENING</h2>
+                        <span class="font-mono text-xs text-dim">2025.11</span>
+                    </div>
+                    <p class="text-gray-400 text-sm line-clamp-2">
+                        从零开始构建去中心化应用。关于 Solidity, ZK Proofs 以及在 OKX 链上部署合约的技术复盘。
+                    </p>
+                </article>
+
+                <article class="post-item group cursor-pointer fade-in" data-category="photo"
+                    onclick="location.href='photos.html'">
+                    <div class="overflow-hidden mb-4 border border-white/10 relative">
+                        <div
+                            class="absolute top-4 left-4 bg-black/50 backdrop-blur px-3 py-1 text-[10px] font-mono text-white border border-white/20 z-10">
+                            VISUALS</div>
+                        <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?q=80&w=1200"
+                            class="w-full h-64 object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700">
+                    </div>
+                    <div class="flex justify-between items-baseline border-b border-white/20 pb-4 mb-4">
+                        <h2 class="font-serif text-3xl text-white group-hover:text-accent-blue transition-colors">
+                            MONOCHROME TOKYO</h2>
+                        <span class="font-mono text-xs text-dim">2024.12</span>
+                    </div>
+                    <p class="text-gray-400 text-sm line-clamp-2">
+                        东京街头的黑白纪实摄影。在高密度的城市森林中寻找孤独的个体。
+                    </p>
+                </article>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function filterPosts(category, btn) {
+            // 1. 按钮样式切换
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // 2. 文章筛选逻辑
+            const posts = document.querySelectorAll('.post-item');
+            posts.forEach(post => {
+                if (category === 'all' || post.dataset.category === category) {
+                    post.style.display = 'block';
+                    // 重新触发淡入动画
+                    post.classList.remove('fade-in');
+                    void post.offsetWidth; // 强制重绘
+                    post.classList.add('fade-in');
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+    </script>
+    <script src="../js/audio.js"></script>
 
 </body>
+
 </html>
