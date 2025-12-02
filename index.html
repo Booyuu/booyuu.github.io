@@ -196,6 +196,8 @@
             transform: translateY(50px);
         }
 
+
+
         .mega-subtitle {
             font-family: 'Rajdhani', sans-serif;
             font-size: 1.5vw;
@@ -219,6 +221,23 @@
 
             100% {
                 filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+            }
+        }
+
+        /* 手机端适配：避免 MINDSCAPE 太宽、换行、溢出 */
+        @media (max-width: 640px) {
+            .mega-title {
+                font-size: 22vw;
+                /* ← 专为手机调的小一点，保证不溢出 */
+                letter-spacing: -0.01em;
+                /* 稍微紧一点，视觉更平衡 */
+            }
+
+            .mega-subtitle {
+                font-size: 3vw;
+                /* 手机端自动缩小副标题 */
+                letter-spacing: 0.5em;
+                /* 防止太宽 */
             }
         }
 
